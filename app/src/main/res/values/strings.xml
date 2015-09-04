@@ -1,0 +1,13 @@
+<resources>
+
+  <string name="app_name">ILoveMarshmallow</string>
+
+  <string name="__leak_canary_display_activity_label" translatable="false">ILoveMarshmallow Leaks</string>
+
+  <string name="hello_world">Hello world!</string>
+  <string name="action_settings">Settings</string>
+  <string name="product_details">Product Details</string>
+
+  <string name="loren_ipsulum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas cursus sem ante, sit amet suscipit tellus sollicitudin vitae. Integer sit amet ligula et ante dignissim dictum. Proin id egestas velit, eget porta metus. Suspendisse potenti. Suspendisse quis dui id lectus porta venenatis. Vivamus eu fringilla libero. Etiam ultrices nec magna ac aliquam.</string>
+  <string name="product_image">Product Image</string>
+</resources>

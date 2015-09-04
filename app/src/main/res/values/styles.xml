@@ -1,0 +1,45 @@
+<resources>
+
+  <!-- Base application theme. -->
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">@color/primary</item>
+    <item name="colorPrimaryDark">@color/primary_dark</item>
+    <item name="colorAccent">@color/accent_color</item>
+    <item name="android:windowBackground">@color/window_background</item>
+  </style>
+
+  <style name="RateBarSmall" parent="Widget.AppCompat.RatingBar" >
+    <item name="android:progressDrawable">@drawable/ic_rating</item>
+    <item name="android:numStars">5</item>
+    <item name="android:stepSize">1</item>
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:minHeight">16dp</item>
+    <item name="android:maxHeight">16dp</item>
+    <item name="android:layout_marginLeft">4dip</item>
+    <item name="android:layout_marginTop">4dip</item>
+  </style>
+
+  <style name="ListItemTitle">
+    <item name="android:layout_marginBottom">8dp</item>
+    <item name="android:paddingLeft">8dp</item>
+    <item name="android:paddingRight">8dp</item>
+    <item name="android:paddingTop">4dp</item>
+    <item name="android:textAppearance">?textAppearanceListItem</item>
+  </style>
+
+  <style name="ListItemPrice">
+    <item name="android:textColor">@color/accent_color</item>
+    <item name="android:textSize">18sp</item>
+  </style>
+
+  <style name="Widget.CardContent" parent="android:Widget">
+    <item name="android:paddingLeft">16dp</item>
+    <item name="android:paddingRight">16dp</item>
+    <item name="android:paddingTop">24dp</item>
+    <item name="android:paddingBottom">24dp</item>
+    <item name="android:orientation">vertical</item>
+  </style>
+
+</resources>
