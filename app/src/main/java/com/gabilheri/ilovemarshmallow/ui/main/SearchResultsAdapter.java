@@ -50,10 +50,10 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
         holder.itemTitle.setText(item.getBrandName());
 
-        int rating = item.getProductRating();
+        float rating = item.getProductRating();
 
-        if(rating > 0) {
-            holder.ratingBar.setProgress(rating);
+        if(rating > 0f) {
+            holder.ratingBar.setProgress((int)rating);
             holder.ratingBar.setVisibility(View.VISIBLE);
         } else {
             holder.ratingBar.setVisibility(View.GONE);
@@ -76,6 +76,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     public void refreshResults(List<SearchResultItem> items) {
         this.items = items;
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<SearchResultItem> items) {
+        this.items.addAll(items);
         notifyDataSetChanged();
     }
 

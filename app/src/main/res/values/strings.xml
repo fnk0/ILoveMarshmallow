@@ -10,4 +10,5 @@
 
   <string name="loren_ipsulum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas cursus sem ante, sit amet suscipit tellus sollicitudin vitae. Integer sit amet ligula et ante dignissim dictum. Proin id egestas velit, eget porta metus. Suspendisse potenti. Suspendisse quis dui id lectus porta venenatis. Vivamus eu fringilla libero. Etiam ultrices nec magna ac aliquam.</string>
   <string name="product_image">Product Image</string>
+  <string name="search_hint">Search...</string>
 </resources>

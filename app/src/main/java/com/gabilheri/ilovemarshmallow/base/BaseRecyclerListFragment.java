@@ -17,12 +17,15 @@ import butterknife.Bind;
 public abstract class BaseRecyclerListFragment extends BaseFragment {
 
     @Bind(R.id.recyclerview)
-    protected RecyclerView recyclerView;
+    protected RecyclerView mRecyclerView;
+
+    protected GridLayoutManager mGridLayoutManager;
 
     protected void initGridCardsList(RecyclerView.Adapter adapter) {
         int numCols = getResources().getInteger(R.integer.num_cols);
-        recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(), numCols));
-        recyclerView.setAdapter(adapter);
+        mGridLayoutManager = new GridLayoutManager(mRecyclerView.getContext(), numCols);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
+        mRecyclerView.setAdapter(adapter);
     }
 
     @Override

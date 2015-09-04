@@ -27,7 +27,8 @@ import rx.schedulers.Schedulers;
  * @version 1.0
  * @since 9/2/15.
  */
-public class SearchFragment extends BaseRecyclerListFragment implements ViewItemCallback, RxCallback<SearchResult> {
+public class SearchFragment extends BaseRecyclerListFragment
+        implements ViewItemCallback, RxCallback<SearchResult>, OnScrolledCallback {
 
     static final String ITEMS_KEY = "search_results";
 
@@ -36,22 +37,30 @@ public class SearchFragment extends BaseRecyclerListFragment implements ViewItem
         return new SearchFragment();
     }
 
+    String mCurrentSearchTerm;
+    boolean mNewSearch = true;
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         List<SearchResultItem> items = new ArrayList<>(0);
         mAdapter = new SearchResultsAdapter(items, this);
         initGridCardsList(mAdapter);
-        if(savedInstanceState == null) {
-            search("Birkenstock");
-        } else {
+        mRecyclerView.addOnScrollListener(new SearchScrollListener(mGridLayoutManager, this));
+        if(savedInstanceState != null) {
             items = Parcels.unwrap(savedInstanceState.getParcelable(ITEMS_KEY));
             mAdapter.refreshResults(items);
         }
     }
 
-    void search(String searchTherm) {
-        MarshmallowApp.instance().api().searchItems(searchTherm)
+    public void search(String searchTherm, int page) {
+        if(searchTherm.equals(mCurrentSearchTerm)) {
+            mNewSearch = false;
+        } else {
+            mCurrentSearchTerm = searchTherm;
+        }
+
+        MarshmallowApp.instance().api().searchItems(searchTherm, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxSubscriber<>(this));
@@ -59,13 +68,23 @@ public class SearchFragment extends BaseRecyclerListFragment implements ViewItem
 
     @Override
     public void onDataReady(SearchResult data) {
-        mAdapter.refreshResults(data.getResults());
+        if(mNewSearch) {
+            mAdapter.refreshResults(data.getResults());
+        } else {
+            mNewSearch = true;
+            mAdapter.addAll(data.getResults());
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ITEMS_KEY, Parcels.wrap(mAdapter.getItems()));
+    }
+
+    @Override
+    public void onScrolled(int page) {
+        search(mCurrentSearchTerm, page);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class SearchResultItem {
     String imageUrl;
     String asin;
     String productUrl;
-    int productRating;
+    float productRating;
     String map;
     String productName;
 
@@ -79,11 +79,11 @@ public class SearchResultItem {
         return this;
     }
 
-    public int getProductRating() {
+    public float getProductRating() {
         return productRating;
     }
 
-    public SearchResultItem setProductRating(int productRating) {
+    public SearchResultItem setProductRating(float productRating) {
         this.productRating = productRating;
         return this;
     }

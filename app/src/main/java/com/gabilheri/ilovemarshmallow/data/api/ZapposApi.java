@@ -19,7 +19,9 @@ public interface ZapposApi {
 
     @GET("/search")
     Observable<SearchResult> searchItems(
-            @Query("term") String searchTerm
+            @Query("term") String searchTerm,
+            @Query("page") int page
+
     );
 
     @GET("/product/asin/{asinId}")

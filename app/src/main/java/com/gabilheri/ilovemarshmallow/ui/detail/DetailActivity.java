@@ -76,6 +76,8 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
     Animator mCircularReveal;
 
+    float initialY = -1f;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -203,9 +205,13 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
+        if(initialY <= 0) {
+            initialY = mItemImage.getY();
+        }
         int maxScroll = appBarLayout.getTotalScrollRange();
         float percentage = (float) Math.abs(offset) / (float) maxScroll;
         float scale = Math.abs(-1f + percentage);
+        mItemImage.setY(initialY * scale);
         mItemImage.setScaleX(scale);
         mItemImage.setScaleY(scale);
 
