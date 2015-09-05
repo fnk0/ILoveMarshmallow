@@ -10,5 +10,6 @@ package com.gabilheri.ilovemarshmallow.base;
 public interface RxCallback<T> {
 
     void onDataReady(T data);
+    void onDataError(Throwable e);
 
 }

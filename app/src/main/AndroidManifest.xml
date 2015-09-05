@@ -3,7 +3,7 @@
   package="com.gabilheri.ilovemarshmallow"
   xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.INTERNET"/>
 
   <application
     android:name=".MarshmallowApp"
@@ -23,7 +23,16 @@
 
     <activity
       android:name=".ui.detail.DetailActivity"
-      android:label="@string/app_name" />
+      android:label="@string/app_name">
+
+      <intent-filter>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:scheme="http" android:host="marshmallow.gabilheri.com"/>
+        <action android:name="android.intent.action.VIEW" />
+      </intent-filter>
+
+    </activity>
 
   </application>
 

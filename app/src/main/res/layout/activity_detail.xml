@@ -68,14 +68,12 @@
         tools:text="$22,00"
         android:gravity="end"
         style="@style/ListItemPrice"
-        android:transitionName="priceTransition"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
       <android.support.v7.widget.AppCompatRatingBar
         android:id="@+id/item_rating_bar"
         style="@style/RateBarSmall"
-        android:transitionName="ratingTransition"
         android:layout_gravity="end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

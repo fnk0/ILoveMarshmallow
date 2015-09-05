@@ -5,12 +5,16 @@ import android.view.View;
 
 import com.gabilheri.ilovemarshmallow.MarshmallowApp;
 import com.gabilheri.ilovemarshmallow.MarshmallowUtils;
+import com.gabilheri.ilovemarshmallow.R;
 import com.gabilheri.ilovemarshmallow.base.BaseRecyclerListFragment;
 import com.gabilheri.ilovemarshmallow.base.RxCallback;
 import com.gabilheri.ilovemarshmallow.base.RxSubscriber;
 import com.gabilheri.ilovemarshmallow.base.ViewItemCallback;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResult;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
+import com.gabilheri.ilovemarshmallow.ui.Path;
+import com.github.jorgecastillo.State;
+import com.github.jorgecastillo.listener.OnStateChangeListener;
 
 import org.parceler.Parcels;
 
@@ -28,7 +32,7 @@ import rx.schedulers.Schedulers;
  * @since 9/2/15.
  */
 public class SearchFragment extends BaseRecyclerListFragment
-        implements ViewItemCallback, RxCallback<SearchResult>, OnScrolledCallback {
+        implements ViewItemCallback, RxCallback<SearchResult>, OnScrolledCallback, OnStateChangeListener {
 
     static final String ITEMS_KEY = "search_results";
     static final String NEW_SEARCH = "new_search";
@@ -39,6 +43,7 @@ public class SearchFragment extends BaseRecyclerListFragment
     String mCurrentSearchTerm;
     boolean mNewSearch = true;
     SearchScrollListener mScrollListener;
+    boolean isFirstOpen = false;
 
     public static SearchFragment newInstance() {
         return new SearchFragment();
@@ -57,8 +62,13 @@ public class SearchFragment extends BaseRecyclerListFragment
             mCurrentSearchTerm = savedInstanceState.getString(CURRENT_TERM);
             mNewSearch = savedInstanceState.getBoolean(NEW_SEARCH);
             mAdapter.refreshResults(items);
-            mFillableLoader.setVisibility(View.GONE);
+            mLoadingLayout.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            isFirstOpen = true;
+            loadPathIntoLoader(Path.MARSHMALLOW);
+            mFillableLoader.start();
+            mFillableLoader.setOnStateChangeListener(this);
         }
     }
 
@@ -66,10 +76,13 @@ public class SearchFragment extends BaseRecyclerListFragment
         if(searchTherm.equals(mCurrentSearchTerm)) {
             mNewSearch = false;
         } else {
-            mFillableLoader.setVisibility(View.VISIBLE);
+            mLoadingLayout.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
             mCurrentSearchTerm = searchTherm;
         }
+
+        mEmptyText.setText(getString(R.string.loading));
+        loadPathIntoLoader(Path.getRandomPath());
         mFillableLoader.start();
         MarshmallowApp.instance().api().searchItems(searchTherm, page)
                 .subscribeOn(Schedulers.io())
@@ -79,7 +92,7 @@ public class SearchFragment extends BaseRecyclerListFragment
 
     @Override
     public void onDataReady(SearchResult data) {
-        mFillableLoader.setVisibility(View.GONE);
+        mLoadingLayout.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
         if(mNewSearch) {
             mScrollListener.resetCount();
@@ -88,6 +101,13 @@ public class SearchFragment extends BaseRecyclerListFragment
             mNewSearch = true;
             mAdapter.addAll(data.getResults());
         }
+    }
+
+    @Override
+    public void onDataError(Throwable e) {
+        mEmptyText.setText(getString(R.string.error_search));
+        mFillableLoader.setSvgPath(Path.CLOUD);
+        mFillableLoader.start();
     }
 
     @Override
@@ -106,5 +126,17 @@ public class SearchFragment extends BaseRecyclerListFragment
     @Override
     public void onItemClick(View v) {
         MarshmallowUtils.openProductDetail(getActivity(), v);
+    }
+
+    @Override
+    public void onStateChange(int state) {
+        if (state == State.FINISHED) {
+            if (isFirstOpen) {
+                loadPathIntoLoader(Path.SEARCH);
+                mEmptyText.setText(getString(R.string.empty_search));
+                isFirstOpen = false;
+                mFillableLoader.start();
+            }
+        }
     }
 }

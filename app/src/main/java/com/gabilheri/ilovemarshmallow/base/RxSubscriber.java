@@ -26,6 +26,7 @@ public class RxSubscriber<T> extends Subscriber<T> {
     @Override
     public void onError(Throwable e) {
         Timber.e(e, String.format("Error on the subscriber: %s", e.getMessage()));
+        callback.onDataError(e);
     }
 
     @Override

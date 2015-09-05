@@ -29,81 +29,72 @@ public class SearchResultItem {
         return brandName;
     }
 
-    public SearchResultItem setBrandName(String brandName) {
+    public void setBrandName(String brandName) {
         this.brandName = brandName;
-        return this;
     }
 
     public String getOriginalPrice() {
         return originalPrice;
     }
 
-    public SearchResultItem setOriginalPrice(String originalPrice) {
+    public void setOriginalPrice(String originalPrice) {
         this.originalPrice = originalPrice;
-        return this;
     }
 
     public String getPrice() {
         return price;
     }
 
-    public SearchResultItem setPrice(String price) {
+    public void setPrice(String price) {
         this.price = price;
-        return this;
     }
 
     public String getImageUrl() {
         return imageUrl;
     }
 
-    public SearchResultItem setImageUrl(String imageUrl) {
+    public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-        return this;
     }
 
     public String getAsin() {
         return asin;
     }
 
-    public SearchResultItem setAsin(String asin) {
+    public void setAsin(String asin) {
         this.asin = asin;
-        return this;
     }
 
     public String getProductUrl() {
         return productUrl;
     }
 
-    public SearchResultItem setProductUrl(String productUrl) {
+    public void setProductUrl(String productUrl) {
         this.productUrl = productUrl;
-        return this;
     }
 
     public float getProductRating() {
         return productRating;
     }
 
-    public SearchResultItem setProductRating(float productRating) {
+    public void setProductRating(float productRating) {
         this.productRating = productRating;
-        return this;
     }
 
     public String getMap() {
         return map;
     }
 
-    public SearchResultItem setMap(String map) {
+    public void setMap(String map) {
         this.map = map;
-        return this;
     }
 
     public String getProductName() {
         return productName;
     }
 
-    public SearchResultItem setProductName(String productName) {
+    public void setProductName(String productName) {
         this.productName = productName;
-        return this;
     }
 
     @Override

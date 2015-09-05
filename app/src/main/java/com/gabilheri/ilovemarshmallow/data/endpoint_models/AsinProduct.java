@@ -14,13 +14,14 @@ import java.util.List;
 @Parcel
 public class AsinProduct {
 
-    private String brandName;
-    private String description;
-    private String asin;
-    private List<String> genders;
-    private String defaultProductType;
-    private String productName;
-    private String defaultImageUrl;
+    String brandName;
+    String description;
+    String asin;
+    List<String> genders;
+    String defaultProductType;
+    String productName;
+    String defaultImageUrl;
+    List<ChildAsin> childAsins;
 
     public AsinProduct() {
     }
@@ -29,62 +30,63 @@ public class AsinProduct {
         return brandName;
     }
 
-    public AsinProduct setBrandName(String brandName) {
+    public void setBrandName(String brandName) {
         this.brandName = brandName;
-        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public AsinProduct setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
-        return this;
     }
 
     public String getAsin() {
         return asin;
     }
 
-    public AsinProduct setAsin(String asin) {
+    public void setAsin(String asin) {
         this.asin = asin;
-        return this;
     }
 
     public List<String> getGenders() {
         return genders;
     }
 
-    public AsinProduct setGenders(List<String> genders) {
+    public void setGenders(List<String> genders) {
         this.genders = genders;
-        return this;
     }
 
     public String getDefaultProductType() {
         return defaultProductType;
     }
 
-    public AsinProduct setDefaultProductType(String defaultProductType) {
+    public void setDefaultProductType(String defaultProductType) {
         this.defaultProductType = defaultProductType;
-        return this;
     }
 
     public String getProductName() {
         return productName;
     }
 
-    public AsinProduct setProductName(String productName) {
+    public void setProductName(String productName) {
         this.productName = productName;
-        return this;
     }
 
     public String getDefaultImageUrl() {
         return defaultImageUrl;
     }
 
-    public AsinProduct setDefaultImageUrl(String defaultImageUrl) {
+    public void setDefaultImageUrl(String defaultImageUrl) {
         this.defaultImageUrl = defaultImageUrl;
-        return this;
+    }
+
+    public List<ChildAsin> getChildAsins() {
+        return childAsins;
+    }
+
+    public void setChildAsins(List<ChildAsin> childAsins) {
+        this.childAsins = childAsins;
     }
 }

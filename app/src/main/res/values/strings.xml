@@ -10,5 +10,8 @@
 
   <string name="loren_ipsulum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas cursus sem ante, sit amet suscipit tellus sollicitudin vitae. Integer sit amet ligula et ante dignissim dictum. Proin id egestas velit, eget porta metus. Suspendisse potenti. Suspendisse quis dui id lectus porta venenatis. Vivamus eu fringilla libero. Etiam ultrices nec magna ac aliquam.</string>
   <string name="product_image">Product Image</string>
-  <string name="search_hint">Search...</string>
+  <string name="search_hint">Search&#8230;</string>
+  <string name="loading">Loading&#8230;</string>
+  <string name="empty_search">Hi, Looks like you have not searched yet!\nTry searching something to start the fun!</string>
+  <string name="error_search">Oops! Looks we couldn\'t find what you where looking for!\nTry searching a different term!</string>
 </resources>

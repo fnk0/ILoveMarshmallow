@@ -24,17 +24,15 @@ public class SearchResult {
         return totalResults;
     }
 
-    public SearchResult setTotalResults(int totalResults) {
+    public void setTotalResults(int totalResults) {
         this.totalResults = totalResults;
-        return this;
     }
 
     public List<SearchResultItem> getResults() {
         return results;
     }
 
-    public SearchResult setResults(List<SearchResultItem> results) {
+    public void setResults(List<SearchResultItem> results) {
         this.results = results;
-        return this;
     }
 }

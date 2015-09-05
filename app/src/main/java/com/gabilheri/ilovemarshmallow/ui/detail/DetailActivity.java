@@ -1,7 +1,9 @@
 package com.gabilheri.ilovemarshmallow.ui.detail;
 
 import android.animation.Animator;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -24,6 +26,7 @@ import com.gabilheri.ilovemarshmallow.base.BaseActivity;
 import com.gabilheri.ilovemarshmallow.base.RxCallback;
 import com.gabilheri.ilovemarshmallow.base.RxSubscriber;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.AsinProduct;
+import com.gabilheri.ilovemarshmallow.data.endpoint_models.ChildAsin;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
 import com.gabilheri.ilovemarshmallow.ui.RoundTransformation;
 import com.squareup.picasso.Picasso;
@@ -35,7 +38,6 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import timber.log.Timber;
 
 /**
  * Created by <a href="mailto:marcusandreog@gmail.com">Marcus Gabilheri</a>
@@ -98,30 +100,29 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
         Bundle extras = getIntent().getExtras();
 
-        mItem = Parcels.unwrap(extras.getParcelable(Const.ASIN));
-        Picasso.with(this)
-                .load(mItem.getImageUrl())
-                .transform(new RoundTransformation(10))
-                .into(mItemImage);
-
-        Timber.d("Rating: " + mItem.getProductRating());
-        if(mItem.getProductRating() != 0f) {
-            mRatingBar.setProgress((int)mItem.getProductRating());
-        } else {
-            mRatingBar.setVisibility(View.GONE);
+        if (extras != null) {
+            mItem = Parcels.unwrap(extras.getParcelable(Const.ASIN));
         }
 
-        mPrice.setText(mItem.getPrice());
+        if (mItem != null) {
+            loadItemImage(mItem.getImageUrl());
+            mRatingBar.setProgress((int) mItem.getProductRating());
+            mPrice.setText(mItem.getPrice());
 
-        if(savedInstanceState != null) {
-            mAsinProduct = Parcels.unwrap(savedInstanceState.getParcelable(ASIN_DATA));
-            mItem = Parcels.unwrap(savedInstanceState.getParcelable(ITEM_DATA));
-            onDataReady(mAsinProduct);
+            if(savedInstanceState != null) {
+                mAsinProduct = Parcels.unwrap(savedInstanceState.getParcelable(ASIN_DATA));
+                mItem = Parcels.unwrap(savedInstanceState.getParcelable(ITEM_DATA));
+                onDataReady(mAsinProduct);
+            } else {
+                loadDataFromAsin(mItem.getAsin());
+            }
         } else {
-            MarshmallowApp.instance().api().getAsinProduct(mItem.getAsin())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new RxSubscriber<>(this));
+            Uri data = getIntent().getData();
+
+            if (data != null) {
+                String asin = data.getPathSegments().get(0);
+                loadDataFromAsin(asin);
+            }
         }
 
         mAppBar.addOnOffsetChangedListener(this);
@@ -133,6 +134,20 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         mItemBackground.setLayoutParams(petDetailsLp);
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.grey_800));
         mCollapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.grey_200));
+    }
+
+    void loadDataFromAsin(String asin) {
+        MarshmallowApp.instance().api().getAsinProduct(asin)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new RxSubscriber<>(this));
+    }
+
+    void loadItemImage(String url) {
+        Picasso.with(this)
+                .load(url)
+                .transform(new RoundTransformation(10))
+                .into(mItemImage);
     }
 
     @Override
@@ -197,6 +212,23 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
         String[] pn = mAsinProduct.getProductName().split(" - ");
         String productName = mAsinProduct.getProductName();
+
+        if (data.getChildAsins().size() > 0) {
+
+            ChildAsin firstChild = data.getChildAsins().get(0);
+            float price = firstChild.getOriginalPrice();
+
+            if (firstChild.getPrice() != 0f) {
+                price = Math.min(price, firstChild.getPrice());
+            }
+
+            mPrice.setText(String.format("$%1.2f", price));
+
+            if (mItem == null) {
+                loadItemImage(firstChild.getImageUrl());
+            }
+        }
+
         if(pn.length > 0) {
             productName = pn[0];
         }
@@ -208,10 +240,17 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
     }
 
     @Override
+    public void onDataError(Throwable e) {
+
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ASIN_DATA, Parcels.wrap(mAsinProduct));
-        outState.putParcelable(ITEM_DATA, Parcels.wrap(mItem));
+        if (mItem != null) {
+            outState.putParcelable(ITEM_DATA, Parcels.wrap(mItem));
+        }
     }
 
     @Override
@@ -241,5 +280,19 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         } else {
             MarshmallowUtils.colorizeToolbar(mToolbar, R.color.grey_800);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == SHARE) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "http://marshmallow.gabilheri.com/" + mAsinProduct.getAsin());
+            shareIntent.setType("text/plain");
+            startActivity(Intent.createChooser(shareIntent, "Share the love!"));
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -38,7 +38,6 @@ public class MainActivity extends BaseActivity implements TextView.OnEditorActio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         setStatusBarColor(R.color.primary_dark);
         setTitle("I Love Marshmallow");
@@ -55,6 +54,9 @@ public class MainActivity extends BaseActivity implements TextView.OnEditorActio
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         boolean handled = false;
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            if (mPager.getCurrentItem() != 0) {
+                mPager.setCurrentItem(0, true);
+            }
             searchFragment.search(mSearchTv.getText().toString(), 1);
             mInputMethodManager.hideSoftInputFromWindow(mSearchTv.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
             handled = true;

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gabilheri.ilovemarshmallow.R;
 import com.gabilheri.ilovemarshmallow.ui.Path;
@@ -26,13 +28,18 @@ public abstract class BaseRecyclerListFragment extends BaseFragment {
     @Bind(R.id.loader)
     protected FillableLoader mFillableLoader;
 
+    @Bind(R.id.loading_layout)
+    protected LinearLayout mLoadingLayout;
+
+    @Bind(R.id.empty_text)
+    protected TextView mEmptyText;
+
     protected GridLayoutManager mGridLayoutManager;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        mFillableLoader.setSvgPath(Path.T_SHIRT);
+        loadPathIntoLoader(Path.getRandomPath());
     }
 
     protected void initGridCardsList(RecyclerView.Adapter adapter) {
@@ -40,6 +47,10 @@ public abstract class BaseRecyclerListFragment extends BaseFragment {
         mGridLayoutManager = new GridLayoutManager(mRecyclerView.getContext(), numCols);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
         mRecyclerView.setAdapter(adapter);
+    }
+
+    protected void loadPathIntoLoader(@Path.SvgPath String path) {
+        mFillableLoader.setSvgPath(path);
     }
 
     @Override

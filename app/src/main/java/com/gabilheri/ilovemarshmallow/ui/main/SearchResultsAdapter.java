@@ -52,13 +52,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
         float rating = item.getProductRating();
 
-        if(rating > 0f) {
-            holder.ratingBar.setProgress((int)rating);
-            holder.ratingBar.setVisibility(View.VISIBLE);
-        } else {
-            holder.ratingBar.setVisibility(View.GONE);
-        }
-
+        holder.ratingBar.setProgress((int)rating);
         holder.itemPrice.setText(item.getPrice());
         holder.itemView.setTag(R.id.asin, item);
     }
