@@ -13,11 +13,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
+import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
 import com.gabilheri.ilovemarshmallow.ui.detail.DetailActivity;
+
+import org.parceler.Parcels;
 
 import java.util.HashSet;
 import java.util.regex.Matcher;
@@ -36,13 +39,15 @@ import timber.log.Timber;
 public class MarshmallowUtils {
 
     public static void openProductDetail(Activity activity, View itemView) {
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
+        Pair<View, String> imageView = new Pair<>(itemView.findViewById(R.id.item_image), Const.TRANSITION_IMAGE);
+        Pair<View, String> priceView = new Pair<>(itemView.findViewById(R.id.item_price), Const.TRANSITION_PRICE);
+        Pair<View, String> ratingBarView = new Pair<>(itemView.findViewById(R.id.item_rating_bar), Const.TRANSITION_RATING);
+
+        SearchResultItem item = (SearchResultItem) itemView.getTag(R.id.asin);
         Intent intent = new Intent(activity, DetailActivity.class);
-        String picUrl = (String) imageView.getTag(R.id.item_image);
-        intent.putExtra(Const.ASIN, (String) itemView.getTag(R.id.asin));
-        intent.putExtra(Const.TRANSITION_IMAGE, picUrl);
+        intent.putExtra(Const.ASIN, Parcels.wrap(item));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, imageView, Const.TRANSITION_IMAGE);
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, imageView, priceView, ratingBarView);
             activity.startActivity(intent, options.toBundle());
         } else {
             activity.startActivity(intent);

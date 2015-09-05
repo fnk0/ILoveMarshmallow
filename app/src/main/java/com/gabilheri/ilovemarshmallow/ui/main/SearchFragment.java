@@ -31,14 +31,18 @@ public class SearchFragment extends BaseRecyclerListFragment
         implements ViewItemCallback, RxCallback<SearchResult>, OnScrolledCallback {
 
     static final String ITEMS_KEY = "search_results";
+    static final String NEW_SEARCH = "new_search";
+    static final String CURRENT_TERM = "current_term";
 
     SearchResultsAdapter mAdapter;
-    public static SearchFragment newInstance() {
-        return new SearchFragment();
-    }
 
     String mCurrentSearchTerm;
     boolean mNewSearch = true;
+    SearchScrollListener mScrollListener;
+
+    public static SearchFragment newInstance() {
+        return new SearchFragment();
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -46,10 +50,15 @@ public class SearchFragment extends BaseRecyclerListFragment
         List<SearchResultItem> items = new ArrayList<>(0);
         mAdapter = new SearchResultsAdapter(items, this);
         initGridCardsList(mAdapter);
-        mRecyclerView.addOnScrollListener(new SearchScrollListener(mGridLayoutManager, this));
+        mScrollListener = new SearchScrollListener(mGridLayoutManager, this);
+        mRecyclerView.addOnScrollListener(mScrollListener);
         if(savedInstanceState != null) {
             items = Parcels.unwrap(savedInstanceState.getParcelable(ITEMS_KEY));
+            mCurrentSearchTerm = savedInstanceState.getString(CURRENT_TERM);
+            mNewSearch = savedInstanceState.getBoolean(NEW_SEARCH);
             mAdapter.refreshResults(items);
+            mFillableLoader.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -57,9 +66,11 @@ public class SearchFragment extends BaseRecyclerListFragment
         if(searchTherm.equals(mCurrentSearchTerm)) {
             mNewSearch = false;
         } else {
+            mFillableLoader.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
             mCurrentSearchTerm = searchTherm;
         }
-
+        mFillableLoader.start();
         MarshmallowApp.instance().api().searchItems(searchTherm, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -68,7 +79,10 @@ public class SearchFragment extends BaseRecyclerListFragment
 
     @Override
     public void onDataReady(SearchResult data) {
+        mFillableLoader.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
         if(mNewSearch) {
+            mScrollListener.resetCount();
             mAdapter.refreshResults(data.getResults());
         } else {
             mNewSearch = true;
@@ -80,6 +94,8 @@ public class SearchFragment extends BaseRecyclerListFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ITEMS_KEY, Parcels.wrap(mAdapter.getItems()));
+        outState.putBoolean(NEW_SEARCH, mNewSearch);
+        outState.putString(CURRENT_TERM, mCurrentSearchTerm);
     }
 
     @Override

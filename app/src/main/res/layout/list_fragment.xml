@@ -2,7 +2,8 @@
 <FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <android.support.v7.widget.RecyclerView
     android:id="@+id/recyclerview"
@@ -11,7 +12,24 @@
     android:clipToPadding="true"
     android:paddingEnd="8dp"
     android:paddingLeft="8dp"
-    android:paddingRight="8dp"/>
+    android:paddingRight="8dp"
+    android:visibility="gone"
+  />
+
+  <com.github.jorgecastillo.FillableLoader
+    android:id="@+id/loader"
+    android:layout_width="128dp"
+    android:layout_height="128dp"
+    app:fl_originalWidth="128"
+    app:fl_originalHeight="128"
+    app:fl_strokeColor="@color/grey_400"
+    app:fl_fillColor="@color/accent_color"
+    app:fl_strokeWidth="1dp"
+    app:fl_strokeDrawingDuration="1000"
+    app:fl_fillDuration="1000"
+    app:fl_clippingTransform="waves"
+    android:layout_gravity="center"
+    />
 
 </FrameLayout>
 

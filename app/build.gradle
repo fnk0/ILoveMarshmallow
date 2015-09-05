@@ -49,6 +49,7 @@ dependencies {
 
     // UI
     compile 'org.sufficientlysecure:html-textview:1.2'
+    compile 'com.github.jorgecastilloprz:fillableloaders:1.02@aar'
 
     // Code Generators
     compile 'com.jakewharton:butterknife:7.0.1'

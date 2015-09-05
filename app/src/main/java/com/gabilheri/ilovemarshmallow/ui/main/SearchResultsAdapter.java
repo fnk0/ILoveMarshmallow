@@ -60,9 +60,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         }
 
         holder.itemPrice.setText(item.getPrice());
-        holder.itemView.setTag(R.id.asin, item.getAsin());
-        holder.itemView.setTag(R.id.item_title, item.getBrandName());
-        holder.itemImage.setTag(R.id.item_image, item.getImageUrl());
+        holder.itemView.setTag(R.id.asin, item);
     }
 
     public List<SearchResultItem> getItems() {

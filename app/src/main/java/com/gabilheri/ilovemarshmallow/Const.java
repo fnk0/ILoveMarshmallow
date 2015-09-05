@@ -11,5 +11,7 @@ public class Const {
 
     public static final String ASIN = "asin";
     public static final String TRANSITION_IMAGE = "imageTransition";
+    public static final String TRANSITION_PRICE = "priceTransition";
+    public static final String TRANSITION_RATING = "ratingTransition";
 
 }

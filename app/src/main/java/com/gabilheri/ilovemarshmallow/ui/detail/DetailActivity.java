@@ -8,12 +8,13 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.AppCompatRatingBar;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.gabilheri.ilovemarshmallow.Const;
 import com.gabilheri.ilovemarshmallow.MarshmallowApp;
@@ -23,6 +24,7 @@ import com.gabilheri.ilovemarshmallow.base.BaseActivity;
 import com.gabilheri.ilovemarshmallow.base.RxCallback;
 import com.gabilheri.ilovemarshmallow.base.RxSubscriber;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.AsinProduct;
+import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
 import com.gabilheri.ilovemarshmallow.ui.RoundTransformation;
 import com.squareup.picasso.Picasso;
 
@@ -33,6 +35,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * Created by <a href="mailto:marcusandreog@gmail.com">Marcus Gabilheri</a>
@@ -44,6 +47,7 @@ import rx.schedulers.Schedulers;
 public class DetailActivity extends BaseActivity implements RxCallback<AsinProduct>, AppBarLayout.OnOffsetChangedListener {
 
     static final String ASIN_DATA = "asinData";
+    static final String ITEM_DATA = "itemData";
     static final int SHARE = 999;
     static final float PERCETANGE_CHANGE_TITLE_COLOR = 0.9f;
 
@@ -60,7 +64,13 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
     HtmlTextView mDescription;
 
     @Bind(R.id.product_name)
-    TextView mProductName;
+    AppCompatTextView mProductName;
+
+    @Bind(R.id.item_price)
+    AppCompatTextView mPrice;
+
+    @Bind(R.id.item_rating_bar)
+    AppCompatRatingBar mRatingBar;
 
     @Bind(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -73,6 +83,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
     boolean mIsFavorite = false;
     AsinProduct mAsinProduct;
+    SearchResultItem mItem;
 
     Animator mCircularReveal;
 
@@ -87,18 +98,27 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
         Bundle extras = getIntent().getExtras();
 
-        String asin = extras.getString(Const.ASIN);
-        String picUrl = extras.getString(Const.TRANSITION_IMAGE);
+        mItem = Parcels.unwrap(extras.getParcelable(Const.ASIN));
         Picasso.with(this)
-                .load(picUrl)
+                .load(mItem.getImageUrl())
                 .transform(new RoundTransformation(10))
                 .into(mItemImage);
 
+        Timber.d("Rating: " + mItem.getProductRating());
+        if(mItem.getProductRating() != 0f) {
+            mRatingBar.setProgress((int)mItem.getProductRating());
+        } else {
+            mRatingBar.setVisibility(View.GONE);
+        }
+
+        mPrice.setText(mItem.getPrice());
+
         if(savedInstanceState != null) {
             mAsinProduct = Parcels.unwrap(savedInstanceState.getParcelable(ASIN_DATA));
+            mItem = Parcels.unwrap(savedInstanceState.getParcelable(ITEM_DATA));
             onDataReady(mAsinProduct);
         } else {
-            MarshmallowApp.instance().api().getAsinProduct(asin)
+            MarshmallowApp.instance().api().getAsinProduct(mItem.getAsin())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new RxSubscriber<>(this));
@@ -191,6 +211,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ASIN_DATA, Parcels.wrap(mAsinProduct));
+        outState.putParcelable(ITEM_DATA, Parcels.wrap(mItem));
     }
 
     @Override
