@@ -2,6 +2,7 @@ package com.gabilheri.ilovemarshmallow;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.gabilheri.ilovemarshmallow.data.DataContract;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
 import com.gabilheri.ilovemarshmallow.ui.detail.DetailActivity;
 
@@ -38,7 +40,11 @@ import timber.log.Timber;
  */
 public class MarshmallowUtils {
 
-
+    public static ContentValues getAutoCompleteContentValues(String searchTerm) {
+        ContentValues values = new ContentValues();
+        values.put(DataContract.AutoCompleteEntry.SEARCH_TERM, searchTerm);
+        return values;
+    }
 
     public static void openProductDetail(Activity activity, View itemView) {
         ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);

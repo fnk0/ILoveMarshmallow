@@ -2,6 +2,7 @@ package com.gabilheri.ilovemarshmallow;
 
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
 import com.gabilheri.ilovemarshmallow.data.api.ZapposApi;
 import com.gabilheri.ilovemarshmallow.data.api.ZapposClient;
 
@@ -25,6 +26,14 @@ public class MarshmallowApp extends Application {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
+
+            Stetho.initialize(
+                    Stetho.newInitializerBuilder(this)
+                            .enableDumpapp(
+                                    Stetho.defaultDumperPluginsProvider(this))
+                            .enableWebKitInspector(
+                                    Stetho.defaultInspectorModulesProvider(this))
+                            .build());
         }
 
         mInstance = this;

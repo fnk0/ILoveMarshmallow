@@ -12,6 +12,7 @@
     android:label="@string/app_name"
     android:theme="@style/AppTheme">
     <activity
+      android:windowSoftInputMode="stateUnchanged|adjustResize"
       android:name=".ui.main.MainActivity"
       android:label="@string/app_name">
       <intent-filter>
@@ -33,6 +34,13 @@
       </intent-filter>
 
     </activity>
+
+    <!-- Content Provider -->
+    <provider
+      android:name=".data.MarshmallowProvider"
+      android:authorities="@string/content_authority"
+      android:exported="false"
+      android:syncable="true"/>
 
   </application>
 

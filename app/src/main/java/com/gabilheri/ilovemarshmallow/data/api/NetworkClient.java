@@ -2,6 +2,8 @@ package com.gabilheri.ilovemarshmallow.data.api;
 
 import android.content.Context;
 
+import com.facebook.stetho.okhttp.StethoInterceptor;
+import com.gabilheri.ilovemarshmallow.BuildConfig;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -25,6 +27,10 @@ public class NetworkClient {
 
     private static OkHttpClient initOkHttpClient(Context context) {
         OkHttpClient client = new OkHttpClient();
+
+        if (BuildConfig.DEBUG) {
+            client.networkInterceptors().add(new StethoInterceptor());
+        }
 
         // Install an HTTP cache in the application cache directory.
         try {

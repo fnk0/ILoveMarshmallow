@@ -41,4 +41,7 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         return mFragmentTitles.get(position);
     }
 
+    public String getFragmentTag(int viewPagerId, int fragmentPosition) {
+        return "android:switcher:" + viewPagerId + ":" + fragmentPosition;
+    }
 }

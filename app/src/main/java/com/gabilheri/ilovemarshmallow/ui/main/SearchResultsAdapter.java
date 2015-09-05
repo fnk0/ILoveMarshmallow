@@ -13,6 +13,7 @@ import com.gabilheri.ilovemarshmallow.base.ViewItemCallback;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -29,6 +30,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     private ViewItemCallback callback;
     private List<SearchResultItem> items;
+
+    public SearchResultsAdapter(ViewItemCallback callback) {
+        this.callback = callback;
+        items = new ArrayList<>();
+    }
 
     public SearchResultsAdapter(List<SearchResultItem> items, ViewItemCallback callback) {
         this.items = items;
@@ -66,13 +72,18 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         return items.size();
     }
 
-    public void refreshResults(List<SearchResultItem> items) {
+    public void swapResults(List<SearchResultItem> items) {
         this.items = items;
         notifyDataSetChanged();
     }
 
     public void addAll(List<SearchResultItem> items) {
         this.items.addAll(items);
+        notifyDataSetChanged();
+    }
+
+    public void reset() {
+        this.items = new ArrayList<>();
         notifyDataSetChanged();
     }
 

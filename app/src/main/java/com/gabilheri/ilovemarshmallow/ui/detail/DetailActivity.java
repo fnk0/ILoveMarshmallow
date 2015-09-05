@@ -1,7 +1,9 @@
 package com.gabilheri.ilovemarshmallow.ui.detail;
 
 import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -25,6 +27,7 @@ import com.gabilheri.ilovemarshmallow.R;
 import com.gabilheri.ilovemarshmallow.base.BaseActivity;
 import com.gabilheri.ilovemarshmallow.base.RxCallback;
 import com.gabilheri.ilovemarshmallow.base.RxSubscriber;
+import com.gabilheri.ilovemarshmallow.data.DataContract;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.AsinProduct;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.ChildAsin;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
@@ -109,7 +112,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
             mRatingBar.setProgress((int) mItem.getProductRating());
             mPrice.setText(mItem.getPrice());
 
-            if(savedInstanceState != null) {
+            if (savedInstanceState != null) {
                 mAsinProduct = Parcels.unwrap(savedInstanceState.getParcelable(ASIN_DATA));
                 mItem = Parcels.unwrap(savedInstanceState.getParcelable(ITEM_DATA));
                 onDataReady(mAsinProduct);
@@ -118,7 +121,6 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
             }
         } else {
             Uri data = getIntent().getData();
-
             if (data != null) {
                 String asin = data.getPathSegments().get(0);
                 loadDataFromAsin(asin);
@@ -127,11 +129,11 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
         mAppBar.addOnOffsetChangedListener(this);
 
-        CollapsingToolbarLayout.LayoutParams petDetailsLp =
+        CollapsingToolbarLayout.LayoutParams detailsLP =
                 (CollapsingToolbarLayout.LayoutParams) mItemBackground.getLayoutParams();
 
-        petDetailsLp.setParallaxMultiplier(0.9f);
-        mItemBackground.setLayoutParams(petDetailsLp);
+        detailsLP.setParallaxMultiplier(0.9f);
+        mItemBackground.setLayoutParams(detailsLP);
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.grey_800));
         mCollapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.grey_200));
     }
@@ -156,55 +158,113 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
     }
 
     @OnClick(R.id.fab_favorite)
-    void favoriteItem(final View v) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            int centerX = (v.getLeft() + v.getRight()) / 2;
-            int centerY = (v.getTop() + v.getBottom()) / 2;
-            final int finalRadius = Math.max(mainLayout.getWidth(), mainLayout.getHeight());
-            getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.accent_color)));
-
-            mCircularReveal = ViewAnimationUtils.createCircularReveal(mainLayout, centerX, centerY, 0, finalRadius);
-            mCircularReveal.setDuration(1000);
-            mCircularReveal.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.window_background)));
-                        if (!mIsFavorite) {
-                            mIsFavorite = true;
-                            fabFavorite.setColorFilter(getResources().getColor(R.color.primary));
-                        } else {
-                            mIsFavorite = false;
-                            fabFavorite.setColorFilter(getResources().getColor(R.color.grey_200));
-                        }
-
-                        mCircularReveal = ViewAnimationUtils.createCircularReveal(v, 0, 0, 0, finalRadius);
-                        mCircularReveal.setDuration(1000).start();
-                    }
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-            mCircularReveal.start();
+    void favoriteItem(View v) {
+        if (mAsinProduct != null) {
+            handleFavoritePressed();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                animateCircularReveal(v);
+            } else {
+                changeFabColor();
+            }
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    void animateCircularReveal(final View v) {
+        int centerX = (v.getLeft() + v.getRight()) / 2;
+        int centerY = (v.getTop() + v.getBottom()) / 2;
+        final int finalRadius = Math.max(mainLayout.getWidth(), mainLayout.getHeight());
+        getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.accent_color)));
+
+        mCircularReveal = ViewAnimationUtils.createCircularReveal(mainLayout, centerX, centerY, 0, finalRadius);
+        mCircularReveal.setDuration(1000);
+        mCircularReveal.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.window_background)));
+                changeFabColor();
+                mCircularReveal = ViewAnimationUtils.createCircularReveal(v, 0, 0, 0, finalRadius);
+                mCircularReveal.setDuration(1000).start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        mCircularReveal.start();
+    }
+
+    void handleFavoritePressed() {
+        if (mAsinProduct != null) {
+            if (!mIsFavorite) {
+                mIsFavorite = true;
+
+                ChildAsin childAsin = null;
+                String price = "No price available";
+                String originalPrice = "";
+                float rating = 0f;
+
+                if (mItem != null) {
+                    rating = mItem.getProductRating();
+                    price = mItem.getPrice();
+                }
+
+                if (mAsinProduct.getChildAsins().size() > 0) {
+                    childAsin = mAsinProduct.getChildAsins().get(0);
+                    if(childAsin.getPrice() != 0.00) {
+                        price = String.format(getString(R.string.money_format), childAsin.getPrice());
+                    } else {
+                        price = String.format(getString(R.string.money_format), childAsin.getOriginalPrice());
+                    }
+
+                    originalPrice = String.format(getString(R.string.money_format), childAsin.getOriginalPrice());
+                }
+
+                SearchResultItem item = new SearchResultItem()
+                        .setAsin(mAsinProduct.getAsin())
+                        .setBrandName(mAsinProduct.getBrandName())
+                        .setImageUrl(mAsinProduct.getDefaultImageUrl())
+                        .setProductName(mAsinProduct.getProductName())
+                        .setPrice(price)
+                        .setOriginalPrice(originalPrice)
+                        .setProductRating(rating);
+
+                getContentResolver().insert(DataContract.SearchResultEntry.CONTENT_URI, SearchResultItem.toContentValues(item));
+            } else {
+                getContentResolver().delete(DataContract.SearchResultEntry.buildUriwithAsin(mAsinProduct.getAsin()), null, null);
+                mIsFavorite = false;
+            }
+        }
+    }
+
+    void changeFabColor() {
+        fabFavorite.setColorFilter(getResources().getColor(mIsFavorite ? R.color.primary : R.color.grey_200));
     }
 
     @Override
     public void onDataReady(AsinProduct data) {
         mAsinProduct = data;
+
+        Cursor cursor = getContentResolver().query(DataContract.SearchResultEntry.buildUriwithAsin(mAsinProduct.getAsin()), null, null, null, null);
+
+        if(cursor != null) {
+            if(cursor.getCount() != 0) {
+                mIsFavorite = true;
+                changeFabColor();
+            }
+            cursor.close();
+        }
 
         mCollapsingToolbarLayout.setTitle(mAsinProduct.getBrandName());
         String description = MarshmallowUtils.appendZapposBaseUrl(mAsinProduct.getDescription());
@@ -222,14 +282,14 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
                 price = Math.min(price, firstChild.getPrice());
             }
 
-            mPrice.setText(String.format("$%1.2f", price));
+            mPrice.setText(String.format(getString(R.string.money_format), price));
 
             if (mItem == null) {
                 loadItemImage(firstChild.getImageUrl());
             }
         }
 
-        if(pn.length > 0) {
+        if (pn.length > 0) {
             productName = pn[0];
         }
 
@@ -255,8 +315,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        MenuItem item = menu.add(SHARE, SHARE, 0, "Share");
+        MenuItem item = menu.add(SHARE, SHARE, 0, R.string.share);
         item.setIcon(R.drawable.ic_social_share);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
@@ -265,7 +324,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
-        if(initialY <= 0) {
+        if (initialY <= 0) {
             initialY = mItemImage.getY();
         }
         int maxScroll = appBarLayout.getTotalScrollRange();
@@ -275,7 +334,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         mItemImage.setScaleX(scale);
         mItemImage.setScaleY(scale);
 
-        if(percentage > 0.8f) {
+        if (percentage > 0.8f) {
             MarshmallowUtils.colorizeToolbar(mToolbar, R.color.grey_200);
         } else {
             MarshmallowUtils.colorizeToolbar(mToolbar, R.color.grey_800);
@@ -288,9 +347,9 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         if (item.getItemId() == SHARE) {
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "http://marshmallow.gabilheri.com/" + mAsinProduct.getAsin());
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.marshmallow_url) + mAsinProduct.getAsin());
             shareIntent.setType("text/plain");
-            startActivity(Intent.createChooser(shareIntent, "Share the love!"));
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_the_love)));
         }
 
         return super.onOptionsItemSelected(item);

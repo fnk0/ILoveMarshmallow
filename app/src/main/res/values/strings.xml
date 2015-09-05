@@ -1,7 +1,7 @@
 <resources>
 
   <string name="app_name">ILoveMarshmallow</string>
-
+  <string name="content_authority">com.gabilheri.ilovemarshmallow.app</string>
   <string name="__leak_canary_display_activity_label" translatable="false">ILoveMarshmallow Leaks</string>
 
   <string name="hello_world">Hello world!</string>
@@ -14,4 +14,10 @@
   <string name="loading">Loading&#8230;</string>
   <string name="empty_search">Hi, Looks like you have not searched yet!\nTry searching something to start the fun!</string>
   <string name="error_search">Oops! Looks we couldn\'t find what you where looking for!\nTry searching a different term!</string>
+  <string name="search_results">Search Results</string>
+  <string name="favorites">Favorites</string>
+  <string name="share_the_love">Share the love!</string>
+  <string name="marshmallow_url">http://marshmallow.gabilheri.com/</string>
+  <string name="share">Share</string>
+  <string name="money_format">$%1.2f</string>
 </resources>

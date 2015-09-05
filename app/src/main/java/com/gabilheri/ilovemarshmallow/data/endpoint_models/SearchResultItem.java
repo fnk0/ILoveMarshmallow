@@ -1,5 +1,10 @@
 package com.gabilheri.ilovemarshmallow.data.endpoint_models;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
+import com.gabilheri.ilovemarshmallow.data.DataContract;
+
 import org.parceler.Parcel;
 
 /**
@@ -29,72 +34,119 @@ public class SearchResultItem {
         return brandName;
     }
 
-    public void setBrandName(String brandName) {
+    public SearchResultItem setBrandName(String brandName) {
         this.brandName = brandName;
+        return this;
     }
 
     public String getOriginalPrice() {
         return originalPrice;
     }
 
-    public void setOriginalPrice(String originalPrice) {
+    public SearchResultItem setOriginalPrice(String originalPrice) {
         this.originalPrice = originalPrice;
+        return this;
     }
 
     public String getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public SearchResultItem setPrice(String price) {
         this.price = price;
+        return this;
     }
 
     public String getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
+    public SearchResultItem setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+        return this;
     }
 
     public String getAsin() {
         return asin;
     }
 
-    public void setAsin(String asin) {
+    public SearchResultItem setAsin(String asin) {
         this.asin = asin;
+        return this;
     }
 
     public String getProductUrl() {
         return productUrl;
     }
 
-    public void setProductUrl(String productUrl) {
+    public SearchResultItem setProductUrl(String productUrl) {
         this.productUrl = productUrl;
+        return this;
     }
 
     public float getProductRating() {
         return productRating;
     }
 
-    public void setProductRating(float productRating) {
+    public SearchResultItem setProductRating(float productRating) {
         this.productRating = productRating;
+        return this;
     }
 
     public String getMap() {
         return map;
     }
 
-    public void setMap(String map) {
+    public SearchResultItem setMap(String map) {
         this.map = map;
+        return this;
     }
 
     public String getProductName() {
         return productName;
     }
 
-    public void setProductName(String productName) {
+    public SearchResultItem setProductName(String productName) {
         this.productName = productName;
+        return this;
+    }
+
+    public static ContentValues toContentValues(SearchResultItem item) {
+        ContentValues values = new ContentValues();
+        values.put(DataContract.SearchResultEntry.BRAND_NAME, item.getBrandName());
+        values.put(DataContract.SearchResultEntry.ORIGINAL_PRICE, item.getOriginalPrice());
+        values.put(DataContract.SearchResultEntry.PRICE, item.getPrice());
+        values.put(DataContract.SearchResultEntry.IMAGE_URL, item.getImageUrl());
+        values.put(DataContract.SearchResultEntry.ASIN, item.getAsin());
+        values.put(DataContract.SearchResultEntry.PRODUCT_URL, item.getProductUrl());
+        values.put(DataContract.SearchResultEntry.PRODUCT_RATING, item.getProductRating());
+        values.put(DataContract.SearchResultEntry.PRODUCT_NAME, item.getProductName());
+        return values;
+    }
+
+    public static SearchResultItem fromCursor(Cursor cursor, boolean close) {
+        SearchResultItem item = new SearchResultItem();
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+
+        if (cursor.getPosition() == -1) {
+            cursor.moveToNext();
+        }
+
+        item.setBrandName(cursor.getString(cursor.getColumnIndex(DataContract.SearchResultEntry.BRAND_NAME)))
+                .setOriginalPrice(cursor.getString(cursor.getColumnIndex(DataContract.SearchResultEntry.ORIGINAL_PRICE)))
+                .setPrice(cursor.getString(cursor.getColumnIndex(DataContract.SearchResultEntry.PRICE)))
+                .setImageUrl(cursor.getString(cursor.getColumnIndex(DataContract.SearchResultEntry.IMAGE_URL)))
+                .setAsin(cursor.getString(cursor.getColumnIndex(DataContract.SearchResultEntry.ASIN)))
+                .setProductUrl(cursor.getString(cursor.getColumnIndex(DataContract.SearchResultEntry.PRODUCT_URL)))
+                .setProductRating(cursor.getFloat(cursor.getColumnIndex(DataContract.SearchResultEntry.PRODUCT_RATING)))
+                .setProductName(cursor.getString(cursor.getColumnIndex(DataContract.SearchResultEntry.PRODUCT_NAME)));
+
+        if (close) {
+            cursor.close();
+        }
+        return item;
     }
 
     @Override

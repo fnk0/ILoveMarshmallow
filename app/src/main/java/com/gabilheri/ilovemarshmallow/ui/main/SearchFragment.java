@@ -52,18 +52,22 @@ public class SearchFragment extends BaseRecyclerListFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         List<SearchResultItem> items = new ArrayList<>(0);
         mAdapter = new SearchResultsAdapter(items, this);
         initGridCardsList(mAdapter);
         mScrollListener = new SearchScrollListener(mGridLayoutManager, this);
         mRecyclerView.addOnScrollListener(mScrollListener);
+
         if(savedInstanceState != null) {
             items = Parcels.unwrap(savedInstanceState.getParcelable(ITEMS_KEY));
             mCurrentSearchTerm = savedInstanceState.getString(CURRENT_TERM);
             mNewSearch = savedInstanceState.getBoolean(NEW_SEARCH);
-            mAdapter.refreshResults(items);
-            mLoadingLayout.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
+            mAdapter.swapResults(items);
+            if(items.size() > 0) {
+                mLoadingLayout.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
         } else {
             isFirstOpen = true;
             loadPathIntoLoader(Path.MARSHMALLOW);
@@ -96,7 +100,7 @@ public class SearchFragment extends BaseRecyclerListFragment
         mRecyclerView.setVisibility(View.VISIBLE);
         if(mNewSearch) {
             mScrollListener.resetCount();
-            mAdapter.refreshResults(data.getResults());
+            mAdapter.swapResults(data.getResults());
         } else {
             mNewSearch = true;
             mAdapter.addAll(data.getResults());
