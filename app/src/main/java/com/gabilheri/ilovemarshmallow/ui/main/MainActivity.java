@@ -42,6 +42,7 @@ public class MainActivity extends BaseActivity
     AutoCompleteTextView mSearchTv;
 
     SearchFragment mSearchFragment;
+    FavoritesFragment mFavoritesFragment;
 
     InputMethodManager mInputMethodManager;
 
@@ -65,13 +66,15 @@ public class MainActivity extends BaseActivity
         FragmentAdapter adapter = new FragmentAdapter(mFragmentManager);
 
         mSearchFragment = (SearchFragment) mFragmentManager.findFragmentByTag(adapter.getFragmentTag(R.id.viewpager, 0));
+        mFavoritesFragment = (FavoritesFragment) mFragmentManager.findFragmentByTag(adapter.getFragmentTag(R.id.viewpager, 1));
 
         if (mSearchFragment == null) {
             mSearchFragment = SearchFragment.newInstance();
+            mFavoritesFragment = FavoritesFragment.newInstance();
         }
 
         adapter.addFragment(mSearchFragment, getString(R.string.search_results));
-        adapter.addFragment(FavoritesFragment.newInstance(), getString(R.string.favorites));
+        adapter.addFragment(mFavoritesFragment, getString(R.string.favorites));
         mPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mPager);
     }

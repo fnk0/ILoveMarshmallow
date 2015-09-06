@@ -54,7 +54,6 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
     static final String ASIN_DATA = "asinData";
     static final String ITEM_DATA = "itemData";
     static final int SHARE = 999;
-    static final float PERCETANGE_CHANGE_TITLE_COLOR = 0.9f;
 
     @Bind(R.id.main_content)
     CoordinatorLayout mainLayout;

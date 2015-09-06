@@ -52,6 +52,10 @@ public class FavoritesFragment extends BaseRecyclerListFragment
                 restartLoader();
             }
         };
+
+        if(savedInstanceState != null) {
+            restartLoader();
+        }
     }
 
     void restartLoader() {
