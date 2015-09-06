@@ -1,7 +1,7 @@
 # ILoveMarshmallow
 
 This app was created for a challenge.
-You can download a working signed apk of this app [here]()
+You can download a working signed apk of this app [here](https://github.com/fnk0/ILoveMarshmallow/blob/master/app/app-release.apk?raw=true)
 
 #### App Description
 Search and view items from the popular retail website Zappos using a subset of their API.
@@ -12,6 +12,13 @@ Search and view items from the popular retail website Zappos using a subset of t
 * Favorite Items to view later
 
 #### Libraries:
+
+###### Support Libraries v23
+* AppCompat
+* CardView
+* Support Annotations
+* Recyclerview
+* Design Support Library
 
 ###### Data handling & Network
 * RxJava / RxAndroid
