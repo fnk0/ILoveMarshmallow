@@ -22,21 +22,21 @@ Search and view items from the popular retail website Zappos using a subset of t
 
 ###### Data handling & Network
 * RxJava / RxAndroid
-* Retrofit 1.9
-* Picasso
-* OkHttp
+* [Retrofit 1.9](http://square.github.io/retrofit/)
+* [Picasso](http://square.github.io/picasso/)
+* [OkHttp](http://square.github.io/okhttp/)
 
 ###### Debugging
-* Leak Canary
-* Timber
-* Stetho
+* [Leak Canary](https://github.com/square/leakcanary)
+* [Timber](https://github.com/JakeWharton/timber)
+* [Stetho](http://facebook.github.io/stetho/)
 
 ###### UI 
-* FillableLoaders
-* Html Textview
+* [FillableLoaders](https://github.com/poolqf/FillableLoaders)
+* [Html Textview](https://github.com/sufficientlysecure/html-textview)
 
 ###### Code Generators
-* ButterKnife
-* Parceler
+* [ButterKnife](http://jakewharton.github.io/butterknife/)
+* [Parceler](https://github.com/johncarl81/parceler)
 
 
