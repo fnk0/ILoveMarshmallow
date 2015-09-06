@@ -21,7 +21,7 @@ Search and view items from the popular retail website Zappos using a subset of t
 * Design Support Library
 
 ###### Data handling & Network
-* RxJava / RxAndroid
+* [RxJava / RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [Retrofit 1.9](http://square.github.io/retrofit/)
 * [Picasso](http://square.github.io/picasso/)
 * [OkHttp](http://square.github.io/okhttp/)
