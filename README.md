@@ -6,6 +6,9 @@ You can download a working signed apk of this app [here](https://github.com/fnk0
 #### App Description
 Search and view items from the popular retail website Zappos using a subset of their API.
 
+#### Screenshots:
+![detail](https://github.com/fnk0/ILoveMarshmallow/blob/master/screenshots/detail.png)
+
 #### Features:
 * Material Design with cool transitions and animations
 * Share items with friends
