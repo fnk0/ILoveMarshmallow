@@ -57,4 +57,9 @@ public abstract class BaseRecyclerListFragment extends BaseFragment {
     protected int getLayoutResource() {
         return R.layout.list_fragment;
     }
+
+    protected void swapViews(boolean listVisible) {
+        mRecyclerView.setVisibility(listVisible ? View.VISIBLE : View.GONE);
+        mLoadingLayout.setVisibility(listVisible ? View.GONE : View.VISIBLE);
+    }
 }

@@ -1,7 +1,9 @@
-package com.gabilheri.ilovemarshmallow.ui.main;
+package com.gabilheri.ilovemarshmallow.ui;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import com.gabilheri.ilovemarshmallow.ui.main.OnScrolledCallback;
 
 /**
  * Created by <a href="mailto:marcusandreog@gmail.com">Marcus Gabilheri</a>
