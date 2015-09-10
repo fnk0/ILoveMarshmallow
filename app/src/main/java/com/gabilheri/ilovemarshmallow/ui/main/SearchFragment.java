@@ -79,7 +79,6 @@ public class SearchFragment extends BaseRecyclerListFragment
         }
 
         mScrollListener.setCurrentPage(mCurrentPage);
-        mScrollListener.setTotalItemCount(items.size());
 
         mRecyclerView.addOnScrollListener(mScrollListener);
 

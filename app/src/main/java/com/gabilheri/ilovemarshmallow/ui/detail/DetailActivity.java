@@ -299,11 +299,6 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         }
 
         mProductName.setText(productName);
-//        if (mItemBackground != null) {
-//            Picasso.with(this).
-//                    load(mAsinProduct.getDefaultImageUrl())
-//                    .into(mItemBackground);
-//        }
 
         if (mPager != null) {
             int counter = 0;
