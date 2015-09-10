@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.gabilheri.ilovemarshmallow.Const;
 import com.gabilheri.ilovemarshmallow.MarshmallowApp;
@@ -61,9 +62,8 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
     @Bind(R.id.main_content)
     CoordinatorLayout mainLayout;
 
-//    @Nullable
-//    @Bind(R.id.item_bg)
-//    ImageView mItemBackground;
+    @Bind(R.id.pager_layout)
+    RelativeLayout mPagerLayout;
 
     @Bind(R.id.viewpager)
     ViewPager mPager;
@@ -135,11 +135,10 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
         mAppBar.addOnOffsetChangedListener(this);
 
-        CollapsingToolbarLayout.LayoutParams detailsLP =
-                (CollapsingToolbarLayout.LayoutParams) mPager.getLayoutParams();
-
+        CollapsingToolbarLayout.LayoutParams detailsLP = (CollapsingToolbarLayout.LayoutParams) mPagerLayout.getLayoutParams();
         detailsLP.setParallaxMultiplier(0.9f);
-        mPager.setLayoutParams(detailsLP);
+        mPagerLayout.setLayoutParams(detailsLP);
+
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.grey_800));
         mCollapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.grey_200));
     }
