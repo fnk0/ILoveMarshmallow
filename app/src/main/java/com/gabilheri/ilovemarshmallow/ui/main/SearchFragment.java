@@ -72,7 +72,9 @@ public class SearchFragment extends BaseRecyclerListFragment
                 swapViews(true);
                 mRecyclerView.smoothScrollToPosition(savedInstanceState.getInt(CURRENT_POSITION));
             }
-        } else {
+        }
+
+        if (items.size() == 0) {
             isFirstOpen = true;
             loadPathIntoLoader(Path.MARSHMALLOW);
             mFillableLoader.start();
@@ -117,11 +119,11 @@ public class SearchFragment extends BaseRecyclerListFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(ITEMS_KEY, Parcels.wrap(mAdapter.getItems()));
+        outState.putParcelable(ITEMS_KEY, Parcels.wrap(mAdapter.getmItems()));
         outState.putBoolean(NEW_SEARCH, mNewSearch);
         outState.putString(CURRENT_TERM, mCurrentSearchTerm);
         outState.putInt(CURRENT_POSITION, mGridLayoutManager.findFirstVisibleItemPosition());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -138,6 +140,7 @@ public class SearchFragment extends BaseRecyclerListFragment
     public void onStateChange(int state) {
         if (state == State.FINISHED) {
             if (isFirstOpen) {
+                isFirstOpen = false;
                 loadPathIntoLoader(Path.SEARCH);
                 mEmptyText.setText(getString(R.string.empty_search));
                 mFillableLoader.start();

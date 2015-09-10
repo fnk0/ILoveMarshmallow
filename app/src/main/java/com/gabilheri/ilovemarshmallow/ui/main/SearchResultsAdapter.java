@@ -28,28 +28,28 @@ import butterknife.ButterKnife;
  */
 public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.SearchResultViewHolder> {
 
-    private ViewItemCallback callback;
-    private List<SearchResultItem> items;
+    private ViewItemCallback mCallback;
+    private List<SearchResultItem> mItems;
 
     public SearchResultsAdapter(ViewItemCallback callback) {
-        this.callback = callback;
-        items = new ArrayList<>();
+        this.mCallback = callback;
+        mItems = new ArrayList<>();
     }
 
     public SearchResultsAdapter(List<SearchResultItem> items, ViewItemCallback callback) {
-        this.items = items;
-        this.callback = callback;
+        this.mItems = items;
+        this.mCallback = callback;
     }
 
     @Override
     public SearchResultViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_result, parent, false);
-        return new SearchResultViewHolder(view, callback);
+        return new SearchResultViewHolder(view, mCallback);
     }
 
     @Override
     public void onBindViewHolder(SearchResultViewHolder holder, int position) {
-        SearchResultItem item = items.get(position);
+        SearchResultItem item = mItems.get(position);
         Picasso.with(holder.itemView.getContext())
                 .load(item.getImageUrl())
                 .into(holder.itemImage);
@@ -63,27 +63,27 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         holder.itemView.setTag(R.id.asin, item);
     }
 
-    public List<SearchResultItem> getItems() {
-        return items;
+    public List<SearchResultItem> getmItems() {
+        return mItems;
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return mItems.size();
     }
 
     public void swapResults(List<SearchResultItem> items) {
-        this.items = items;
+        this.mItems = items;
         notifyDataSetChanged();
     }
 
     public void addAll(List<SearchResultItem> items) {
-        this.items.addAll(items);
+        this.mItems.addAll(items);
         notifyDataSetChanged();
     }
 
     public void reset() {
-        this.items = new ArrayList<>();
+        this.mItems = new ArrayList<>();
         notifyDataSetChanged();
     }
 

@@ -20,22 +20,44 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:fitsSystemWindows="true"
-      app:expandedTitleMarginBottom="12dp"
       app:contentScrim="?attr/colorPrimary"
+      app:expandedTitleMarginBottom="12dp"
       app:expandedTitleMarginStart="140dp"
       app:layout_scrollFlags="scroll|exitUntilCollapsed"
       >
 
-      <ImageView
-        android:id="@+id/item_bg"
+      <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/product_image"
         android:fitsSystemWindows="true"
-        android:scaleType="centerCrop"
-        app:layout_collapseMode="parallax"
+        app:layout_collapseMode="parallax">
+
+        <android.support.v4.view.ViewPager
+          android:id="@+id/viewpager"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
+
+        <me.relex.circleindicator.CircleIndicator
+          android:id="@+id/indicator_default"
+          android:layout_width="fill_parent"
+          android:layout_height="40dp"
+          android:layout_alignParentBottom="true"
+          android:layout_marginBottom="30dp"
         />
+
+      </RelativeLayout>
+
+
+      <!--<ImageView-->
+      <!--android:id="@+id/item_bg"-->
+      <!--android:layout_width="match_parent"-->
+      <!--android:layout_height="match_parent"-->
+      <!--android:contentDescription="@string/product_image"-->
+      <!--android:fitsSystemWindows="true"-->
+      <!--android:scaleType="centerCrop"-->
+      <!--app:layout_collapseMode="parallax"-->
+      <!--/>-->
 
       <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -65,26 +87,26 @@
 
       <android.support.v7.widget.AppCompatTextView
         android:id="@+id/item_price"
-        tools:text="$22,00"
-        android:gravity="end"
         style="@style/ListItemPrice"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        tools:text="$22,00"/>
 
       <android.support.v7.widget.AppCompatRatingBar
         android:id="@+id/item_rating_bar"
         style="@style/RateBarSmall"
-        android:layout_gravity="end"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"/>
 
       <android.support.v7.widget.AppCompatTextView
         android:id="@+id/product_name"
-        tools:text="Product Name"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_marginBottom="12dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        tools:text="Product Name"/>
 
       <org.sufficientlysecure.htmltextview.HtmlTextView
         android:id="@+id/description"
@@ -112,11 +134,11 @@
     android:id="@+id/item_image"
     android:layout_width="@dimen/image_width"
     android:layout_height="@dimen/image_width"
+    android:layout_marginLeft="@dimen/activity_vertical_margin"
+    android:layout_marginTop="200dp"
     android:fitsSystemWindows="true"
     android:scaleType="fitCenter"
-    android:layout_marginTop="200dp"
     android:transitionName="imageTransition"
-    android:layout_marginLeft="@dimen/activity_vertical_margin"
     tools:ignore="contentDescription"
     tools:src="@mipmap/ic_launcher"
     />

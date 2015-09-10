@@ -142,7 +142,12 @@ public class MarshmallowProvider extends ContentProvider {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         if (selection == null) {
-            selection = "1";
+            if (selectionArgs != null) {
+                selection = itemWithAsin;
+            } else {
+                selection = "1";
+            }
+
         }
 
         int rowsDeleted = db.delete(getTableNameForURI(uri), selection, selectionArgs);

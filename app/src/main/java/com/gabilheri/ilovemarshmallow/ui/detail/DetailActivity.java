@@ -12,8 +12,10 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +33,7 @@ import com.gabilheri.ilovemarshmallow.data.DataContract;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.AsinProduct;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.ChildAsin;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
+import com.gabilheri.ilovemarshmallow.ui.ImagePagerAdapter;
 import com.gabilheri.ilovemarshmallow.ui.RoundTransformation;
 import com.squareup.picasso.Picasso;
 
@@ -58,8 +61,12 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
     @Bind(R.id.main_content)
     CoordinatorLayout mainLayout;
 
-    @Bind(R.id.item_bg)
-    ImageView mItemBackground;
+//    @Nullable
+//    @Bind(R.id.item_bg)
+//    ImageView mItemBackground;
+
+    @Bind(R.id.viewpager)
+    ViewPager mPager;
 
     @Bind(R.id.item_image)
     ImageView mItemImage;
@@ -129,10 +136,10 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         mAppBar.addOnOffsetChangedListener(this);
 
         CollapsingToolbarLayout.LayoutParams detailsLP =
-                (CollapsingToolbarLayout.LayoutParams) mItemBackground.getLayoutParams();
+                (CollapsingToolbarLayout.LayoutParams) mPager.getLayoutParams();
 
         detailsLP.setParallaxMultiplier(0.9f);
-        mItemBackground.setLayoutParams(detailsLP);
+        mPager.setLayoutParams(detailsLP);
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.grey_800));
         mCollapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.grey_200));
     }
@@ -241,7 +248,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
                 getContentResolver().insert(DataContract.SearchResultEntry.CONTENT_URI, SearchResultItem.toContentValues(item));
             } else {
-                getContentResolver().delete(DataContract.SearchResultEntry.buildUriwithAsin(mAsinProduct.getAsin()), null, null);
+                getContentResolver().delete(DataContract.SearchResultEntry.CONTENT_URI, null, new String[] {mAsinProduct.getAsin()});
                 mIsFavorite = false;
             }
         }
@@ -293,9 +300,25 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         }
 
         mProductName.setText(productName);
-        Picasso.with(this).
-                load(mAsinProduct.getDefaultImageUrl())
-                .into(mItemBackground);
+//        if (mItemBackground != null) {
+//            Picasso.with(this).
+//                    load(mAsinProduct.getDefaultImageUrl())
+//                    .into(mItemBackground);
+//        }
+
+        if (mPager != null) {
+            int counter = 0;
+            SparseArray<String> imageUrls = new SparseArray<>();
+            imageUrls.put(counter, mAsinProduct.getDefaultImageUrl());
+            for (ChildAsin childAsin : mAsinProduct.getChildAsins()) {
+                counter++;
+                imageUrls.put(counter, childAsin.getImageUrl());
+            }
+
+            ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(this, imageUrls);
+            mPager.setAdapter(imagePagerAdapter);
+        }
+
     }
 
     @Override
