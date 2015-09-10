@@ -5,6 +5,7 @@ import android.app.Application;
 import com.facebook.stetho.Stetho;
 import com.gabilheri.ilovemarshmallow.data.api.ZapposApi;
 import com.gabilheri.ilovemarshmallow.data.api.ZapposClient;
+import com.squareup.leakcanary.LeakCanary;
 
 import timber.log.Timber;
 
@@ -24,7 +25,12 @@ public class MarshmallowApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+        // Don't need to be inside if DEBUG because the
+        // non debug version of the library does nothing
+        LeakCanary.install(this);
+
         if (BuildConfig.DEBUG) {
+
             Timber.plant(new Timber.DebugTree());
 
             Stetho.initialize(

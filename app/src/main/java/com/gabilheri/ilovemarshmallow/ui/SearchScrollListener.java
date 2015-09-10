@@ -3,8 +3,6 @@ package com.gabilheri.ilovemarshmallow.ui;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.gabilheri.ilovemarshmallow.ui.main.OnScrolledCallback;
-
 /**
  * Created by <a href="mailto:marcusandreog@gmail.com">Marcus Gabilheri</a>
  *
@@ -35,6 +33,14 @@ public class SearchScrollListener extends RecyclerView.OnScrollListener {
         mFirstVisibleItem = 0;
         mVisibleItemCount = 0;
         mTotalItemCount = 0;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.mCurrentPage = currentPage;
+    }
+
+    public void setTotalItemCount(int totalItemCount) {
+        this.mTotalItemCount = totalItemCount;
     }
 
     @Override

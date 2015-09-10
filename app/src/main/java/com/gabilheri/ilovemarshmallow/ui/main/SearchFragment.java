@@ -12,6 +12,7 @@ import com.gabilheri.ilovemarshmallow.base.RxSubscriber;
 import com.gabilheri.ilovemarshmallow.base.ViewItemCallback;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResult;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
+import com.gabilheri.ilovemarshmallow.ui.OnScrolledCallback;
 import com.gabilheri.ilovemarshmallow.ui.Path;
 import com.gabilheri.ilovemarshmallow.ui.SearchScrollListener;
 import com.github.jorgecastillo.State;
@@ -39,6 +40,7 @@ public class SearchFragment extends BaseRecyclerListFragment
     static final String NEW_SEARCH = "new_search";
     static final String CURRENT_TERM = "current_term";
     static final String CURRENT_POSITION = "current_position";
+    static final String CURRENT_PAGE = "current_page";
 
     SearchResultsAdapter mAdapter;
 
@@ -46,6 +48,8 @@ public class SearchFragment extends BaseRecyclerListFragment
     boolean mNewSearch = true;
     SearchScrollListener mScrollListener;
     boolean isFirstOpen = false;
+
+    int mCurrentPage = 1;
 
     public static SearchFragment newInstance() {
         return new SearchFragment();
@@ -60,19 +64,24 @@ public class SearchFragment extends BaseRecyclerListFragment
         mAdapter = new SearchResultsAdapter(items, this);
         initGridCardsList(mAdapter);
         mScrollListener = new SearchScrollListener(mGridLayoutManager, this);
-        mRecyclerView.addOnScrollListener(mScrollListener);
         swapViews(false);
 
         if(savedInstanceState != null) {
             items = Parcels.unwrap(savedInstanceState.getParcelable(ITEMS_KEY));
             mCurrentSearchTerm = savedInstanceState.getString(CURRENT_TERM);
             mNewSearch = savedInstanceState.getBoolean(NEW_SEARCH);
+            mCurrentPage = savedInstanceState.getInt(CURRENT_PAGE);
             mAdapter.swapResults(items);
             if(items.size() > 0) {
                 swapViews(true);
                 mRecyclerView.smoothScrollToPosition(savedInstanceState.getInt(CURRENT_POSITION));
             }
         }
+
+        mScrollListener.setCurrentPage(mCurrentPage);
+        mScrollListener.setTotalItemCount(items.size());
+
+        mRecyclerView.addOnScrollListener(mScrollListener);
 
         if (items.size() == 0) {
             isFirstOpen = true;
@@ -82,9 +91,15 @@ public class SearchFragment extends BaseRecyclerListFragment
     }
 
     public void search(String searchTherm, int page) {
+        mCurrentPage = page;
+
+        // If is not a new search we set a boolean
+        // This will determine if we want to add items to the adapter
+        // or reset the adapter itself
         if(searchTherm.equals(mCurrentSearchTerm)) {
             mNewSearch = false;
         } else {
+            // Start the loading animation
             swapViews(false);
             mCurrentSearchTerm = searchTherm;
         }
@@ -92,7 +107,8 @@ public class SearchFragment extends BaseRecyclerListFragment
         mEmptyText.setText(getString(R.string.loading));
         loadPathIntoLoader(Path.getRandomPath());
         mFillableLoader.start();
-        MarshmallowApp.instance().api().searchItems(searchTherm, page)
+
+        MarshmallowApp.instance().api().searchItems(searchTherm, mCurrentPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxSubscriber<>(this));
@@ -123,6 +139,7 @@ public class SearchFragment extends BaseRecyclerListFragment
         outState.putBoolean(NEW_SEARCH, mNewSearch);
         outState.putString(CURRENT_TERM, mCurrentSearchTerm);
         outState.putInt(CURRENT_POSITION, mGridLayoutManager.findFirstVisibleItemPosition());
+        outState.putInt(CURRENT_PAGE, mCurrentPage);
         super.onSaveInstanceState(outState);
     }
 

@@ -1,4 +1,4 @@
-package com.gabilheri.ilovemarshmallow.ui.main;
+package com.gabilheri.ilovemarshmallow.ui;
 
 /**
  * Created by <a href="mailto:marcusandreog@gmail.com">Marcus Gabilheri</a>
