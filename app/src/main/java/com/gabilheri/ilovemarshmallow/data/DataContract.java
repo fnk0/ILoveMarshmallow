@@ -10,6 +10,9 @@ import android.provider.BaseColumns;
  * @author Marcus Gabilheri
  * @version 1.0
  * @since 9/5/15.
+ *
+ * Default contracts that will be used by the ContentProvider
+ *
  */
 public class DataContract {
 

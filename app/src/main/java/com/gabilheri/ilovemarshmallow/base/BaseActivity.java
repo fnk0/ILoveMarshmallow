@@ -56,6 +56,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Helper method to enable Back navigation for a activity
+     * When this method is called the activity will then display
+     * a Back arrow that will navigate to the last item on the Stack
+     */
     protected void enableBackNav() {
         if(getSupportActionBar() != null) {
             mIsBackNav = true;
@@ -72,6 +77,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Helper method to set the Title of the SupportActionBar
+     *
+     * @param title
+     *      The title of this toolbar
+     */
     public void setTitle(@NonNull String title) {
         if(getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
@@ -87,16 +98,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
@@ -107,8 +108,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         return R.layout.activity_base;
     }
 
-    protected void addFragmentToContainer(Fragment fragment) {
+    /**
+     * Helper method to add a Fragment to the Container of this Activity
+     * @param fragment
+     *      The fragment to be added
+     * @param tag
+     *      The tag of the fragment to be added
+     */
+    protected void addFragmentToContainer(Fragment fragment, String tag) {
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, fragment).commit();
+        fragmentTransaction.replace(R.id.container, fragment, tag).commit();
     }
 }

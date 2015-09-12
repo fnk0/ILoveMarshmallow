@@ -20,4 +20,5 @@
   <string name="marshmallow_url">http://marshmallow.gabilheri.com/</string>
   <string name="share">Share</string>
   <string name="money_format">$%1.2f</string>
+  <string name="error_loading">Error loading detailed information. Please try again later.</string>
 </resources>

@@ -33,10 +33,6 @@ public class ImagePagerAdapter extends PagerAdapter {
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setImageUrls(SparseArray<String> imageUrls) {
-        this.imageUrls = imageUrls;
-    }
-
     @Override
     public int getCount() {
         return imageUrls.size();
@@ -49,6 +45,7 @@ public class ImagePagerAdapter extends PagerAdapter {
 
         Picasso.with(mContext)
                 .load(imageUrls.get(position))
+                .error(R.drawable.no_image)
                 .transform(new RoundTransformation(10))
                 .into(imageView);
 
@@ -64,6 +61,6 @@ public class ImagePagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((RelativeLayout) object);
+        return view == object;
     }
 }

@@ -1,5 +1,6 @@
 package com.gabilheri.ilovemarshmallow;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.ContentValues;
@@ -7,10 +8,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
@@ -40,24 +39,44 @@ import timber.log.Timber;
  */
 public class MarshmallowUtils {
 
+    /**
+     * Helper method to get a ContentValues representation of the AutoComplete item
+     * @param searchTerm
+     *      The term that was searched
+     * @return
+     *      A ContentValues that can be inserted into the content provider
+     */
     public static ContentValues getAutoCompleteContentValues(String searchTerm) {
         ContentValues values = new ContentValues();
         values.put(DataContract.AutoCompleteEntry.SEARCH_TERM, searchTerm);
         return values;
     }
 
+    /**
+     * Helper method to open the detail Activity.
+     * If the version is Lollipop or above a cool transition is performed
+     *
+     * @param activity
+     *      The activity to start the intent
+     * @param itemView
+     *      The View that was clicked
+     */
     public static void openProductDetail(Activity activity, View itemView) {
         ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
-
         SearchResultItem item = (SearchResultItem) itemView.getTag(R.id.asin);
         Intent intent = new Intent(activity, DetailActivity.class);
         intent.putExtra(Const.ASIN, Parcels.wrap(item));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, imageView, Const.TRANSITION_IMAGE);
-            activity.startActivity(intent, options.toBundle());
+        if (Const.IS_LOLLIPOP) {
+            performTransition(activity, imageView, intent);
         } else {
             activity.startActivity(intent);
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static void performTransition(Activity activity, View v, Intent intent) {
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, v, Const.TRANSITION_IMAGE);
+        activity.startActivity(intent, options.toBundle());
     }
 
     /**
@@ -89,12 +108,6 @@ public class MarshmallowUtils {
             // Syntax error in the regular expression
             return null;
         }
-    }
-
-    public static Drawable getTintedDrawable(Resources res, @NonNull Drawable drawable, @ColorRes int colorResId) {
-        int color = res.getColor(colorResId);
-        drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-        return drawable;
     }
 
     /**

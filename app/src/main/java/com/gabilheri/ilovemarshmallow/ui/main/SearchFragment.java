@@ -9,7 +9,7 @@ import com.gabilheri.ilovemarshmallow.R;
 import com.gabilheri.ilovemarshmallow.base.BaseRecyclerListFragment;
 import com.gabilheri.ilovemarshmallow.base.RxCallback;
 import com.gabilheri.ilovemarshmallow.base.RxSubscriber;
-import com.gabilheri.ilovemarshmallow.base.ViewItemCallback;
+import com.gabilheri.ilovemarshmallow.base.ItemCallback;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResult;
 import com.gabilheri.ilovemarshmallow.data.endpoint_models.SearchResultItem;
 import com.gabilheri.ilovemarshmallow.ui.OnScrolledCallback;
@@ -34,7 +34,7 @@ import rx.schedulers.Schedulers;
  * @since 9/2/15.
  */
 public class SearchFragment extends BaseRecyclerListFragment
-        implements ViewItemCallback, RxCallback<SearchResult>, OnScrolledCallback, OnStateChangeListener {
+        implements ItemCallback<View>, RxCallback<SearchResult>, OnScrolledCallback, OnStateChangeListener {
 
     static final String ITEMS_KEY = "search_results";
     static final String NEW_SEARCH = "new_search";
@@ -79,7 +79,6 @@ public class SearchFragment extends BaseRecyclerListFragment
         }
 
         mScrollListener.setCurrentPage(mCurrentPage);
-
         mRecyclerView.addOnScrollListener(mScrollListener);
 
         if (items.size() == 0) {
@@ -89,6 +88,16 @@ public class SearchFragment extends BaseRecyclerListFragment
         }
     }
 
+    /**
+     * Convenience method to search the API
+     * If the previous search therm is different than the previous one
+     * The loading indicator is shown and the adaper is reset
+     *
+     * @param searchTherm
+     *      The therm to be searched
+     * @param page
+     *      The page that we want to retrieve
+     */
     public void search(String searchTherm, int page) {
         mCurrentPage = page;
 
@@ -101,16 +110,15 @@ public class SearchFragment extends BaseRecyclerListFragment
             // Start the loading animation
             swapViews(false);
             mCurrentSearchTerm = searchTherm;
+            mEmptyText.setText(getString(R.string.loading));
+            loadPathIntoLoader(Path.getRandomPath());
+            mFillableLoader.start();
         }
 
-        mEmptyText.setText(getString(R.string.loading));
-        loadPathIntoLoader(Path.getRandomPath());
-        mFillableLoader.start();
-
-        MarshmallowApp.instance().api().searchItems(searchTherm, mCurrentPage)
+        mCompositeSubscription.add(MarshmallowApp.instance().api().searchItems(searchTherm, mCurrentPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new RxSubscriber<>(this));
+                .subscribe(new RxSubscriber<>(this)));
     }
 
     @Override
@@ -134,7 +142,7 @@ public class SearchFragment extends BaseRecyclerListFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(ITEMS_KEY, Parcels.wrap(mAdapter.getmItems()));
+        outState.putParcelable(ITEMS_KEY, Parcels.wrap(mAdapter.getItems()));
         outState.putBoolean(NEW_SEARCH, mNewSearch);
         outState.putString(CURRENT_TERM, mCurrentSearchTerm);
         outState.putInt(CURRENT_POSITION, mGridLayoutManager.findFirstVisibleItemPosition());

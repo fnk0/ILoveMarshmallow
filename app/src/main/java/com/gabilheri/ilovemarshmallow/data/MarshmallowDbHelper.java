@@ -32,12 +32,28 @@ public class MarshmallowDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE " + DataContract.AutoCompleteEntry.TABLE_NAME + ";");
     }
 
+    /**
+     * Creates the AutoComplete table that will hold therms the user has already searched for
+     *
+     * I taught about using the Zappos Auto complete API from api.zappos.com but since we were only giving
+     * 2 endpoints to work with.. I was not sure if I was able or not. (Didn't want to get disqualified for using
+     * other endpoints)
+     *
+     * @return
+     *      The SQL string with the statement to create the table
+     */
     private static String createAutocompleteTable() {
         return "CREATE TABLE " + DataContract.AutoCompleteEntry.TABLE_NAME + "(" +
                 DataContract.AutoCompleteEntry.SEARCH_TERM + " TEXT NOT NULL, " +
                 "UNIQUE (" + DataContract.AutoCompleteEntry.SEARCH_TERM + ") ON CONFLICT REPLACE);";
     }
 
+    /**
+     * Creates the table that will hold the items favorite by the user
+     *
+     * @return
+     *      The SQL string with the statement to create the table
+     */
     private static String createSearchItemTable() {
         return "CREATE TABLE " + DataContract.SearchResultEntry.TABLE_NAME + "(" +
                 DataContract.SearchResultEntry.BRAND_NAME + " TEXT, " +

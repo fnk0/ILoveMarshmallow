@@ -6,6 +6,11 @@ package com.gabilheri.ilovemarshmallow.base;
  * @author Marcus Gabilheri
  * @version 1.0
  * @since 9/3/15.
+ *
+ * Callback to be used with a RxSubscriber to receive a event when data is retrieved from the internet
+ *
+ * @param <T>
+ *     Default data to be returned by this Callback
  */
 public interface RxCallback<T> {
 

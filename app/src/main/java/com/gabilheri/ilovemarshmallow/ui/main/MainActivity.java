@@ -10,12 +10,15 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
+import com.gabilheri.ilovemarshmallow.Const;
 import com.gabilheri.ilovemarshmallow.MarshmallowUtils;
 import com.gabilheri.ilovemarshmallow.R;
 import com.gabilheri.ilovemarshmallow.base.BaseActivity;
@@ -24,10 +27,8 @@ import com.gabilheri.ilovemarshmallow.ui.FragmentAdapter;
 
 import butterknife.Bind;
 
-public class MainActivity extends BaseActivity
-        implements TextView.OnEditorActionListener, LoaderManager.LoaderCallbacks<Cursor> {
-
-    private static final int AUTO_COMPLETE_LOADER = 999;
+public class MainActivity extends BaseActivity implements TextView.OnEditorActionListener,
+        LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
     @Bind(R.id.viewpager)
     ViewPager mPager;
@@ -52,8 +53,7 @@ public class MainActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // House keeping initialization...
-        getLoaderManager().initLoader(AUTO_COMPLETE_LOADER, null, this);
+        getLoaderManager().initLoader(Const.AUTO_COMPLETE_LOADER, null, this);
         setStatusBarColor(R.color.primary_dark);
 
         // Search bar stuff
@@ -77,22 +77,44 @@ public class MainActivity extends BaseActivity
         adapter.addFragment(mFavoritesFragment, getString(R.string.favorites));
         mPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mPager);
+        mSearchTv.setOnItemClickListener(this);
     }
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         boolean handled = false;
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            if (mPager.getCurrentItem() != 0) {
-                mPager.setCurrentItem(0, true);
-            }
-            String searchTerm = mSearchTv.getText().toString();
-            getContentResolver().insert(DataContract.AutoCompleteEntry.CONTENT_URI, MarshmallowUtils.getAutoCompleteContentValues(searchTerm));
-            mSearchFragment.search(searchTerm, 1);
-            mInputMethodManager.hideSoftInputFromWindow(mSearchTv.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+            search(mSearchTv.getText().toString());
             handled = true;
         }
         return handled;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        search((String) parent.getAdapter().getItem(position));
+    }
+
+    /**
+     * Convenience method to deal with common use cases when we search the API
+     * Common cases include: dismiss the keyboard, dismiss auto complete dropdown and insert the searched term
+     * into the database for future auto completions
+     *
+     * @param searchTerm
+     *      The term to  be searched
+     */
+    private void search(String searchTerm) {
+        if (mPager.getCurrentItem() != 0) {
+            mPager.setCurrentItem(0, true);
+        }
+
+        getContentResolver().insert(DataContract.AutoCompleteEntry.CONTENT_URI, MarshmallowUtils.getAutoCompleteContentValues(searchTerm));
+        mSearchFragment.search(searchTerm, 1);
+        mInputMethodManager.hideSoftInputFromWindow(mSearchTv.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+
+        if(mSearchTv.isPopupShowing()) {
+            mSearchTv.dismissDropDown();
+        }
     }
 
     @Override
@@ -102,7 +124,7 @@ public class MainActivity extends BaseActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (id == AUTO_COMPLETE_LOADER) {
+        if (id == Const.AUTO_COMPLETE_LOADER) {
             return new CursorLoader(this, DataContract.AutoCompleteEntry.CONTENT_URI, null, null, null, null);
         }
         return null;

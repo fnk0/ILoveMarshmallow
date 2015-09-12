@@ -12,6 +12,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.AppCompatTextView;
@@ -154,6 +155,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         Picasso.with(this)
                 .load(url)
                 .transform(new RoundTransformation(10))
+                .error(R.drawable.no_image)
                 .into(mItemImage);
     }
 
@@ -166,7 +168,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
     void favoriteItem(View v) {
         if (mAsinProduct != null) {
             handleFavoritePressed();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Const.IS_LOLLIPOP) {
                 animateCircularReveal(v);
             } else {
                 changeFabColor();
@@ -210,6 +212,15 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         mCircularReveal.start();
     }
 
+    /**
+     * Saves a item to the local database to indicate that this was favorite by the user
+     * and display in the Favorites fragment
+     *
+     * We use the AsinProduct to create our SearchResultItem element because if someone arrives
+     * into this fragment by a shared URL throigh a friend them the SearchResultItem element will be null
+     * Therefore we use the returned AsinProduct that is ensured to not be null
+     *
+     */
     void handleFavoritePressed() {
         if (mAsinProduct != null) {
             if (!mIsFavorite) {
@@ -253,6 +264,9 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         }
     }
 
+    /**
+     * Changes the color of the Fab icon based if this item is Favorite or not
+     */
     void changeFabColor() {
         fabFavorite.setColorFilter(getResources().getColor(mIsFavorite ? R.color.primary : R.color.grey_200));
     }
@@ -261,8 +275,8 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
     public void onDataReady(AsinProduct data) {
         mAsinProduct = data;
 
+        // First we check if this item is in the local database to determine if it has been favorite or not
         Cursor cursor = getContentResolver().query(DataContract.SearchResultEntry.buildUriwithAsin(mAsinProduct.getAsin()), null, null, null, null);
-
         if(cursor != null) {
             if(cursor.getCount() != 0) {
                 mIsFavorite = true;
@@ -275,9 +289,13 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         String description = MarshmallowUtils.appendZapposBaseUrl(mAsinProduct.getDescription());
         mDescription.setHtmlFromString(description, new HtmlTextView.RemoteImageGetter());
 
+        // Some product names are really long! Therefore splitting them makes sense to only get the name
+        // Itself rather than the size, etc..
         String[] pn = mAsinProduct.getProductName().split(" - ");
         String productName = mAsinProduct.getProductName();
 
+        // If we have a child them we use the child information to refresh the
+        // price & set the background image
         if (data.getChildAsins().size() > 0) {
 
             ChildAsin firstChild = data.getChildAsins().get(0);
@@ -317,7 +335,7 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
 
     @Override
     public void onDataError(Throwable e) {
-
+        Snackbar.make(mainLayout, R.string.error_loading, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -338,11 +356,18 @@ public class DetailActivity extends BaseActivity implements RxCallback<AsinProdu
         return super.onCreateOptionsMenu(menu);
     }
 
+    // This method is used to hide the Thumbnail of the item and to change
+    // the color of the toolbar items.
+    // The colors is important because most of the zappos images have a white background
+    // Which is the default color of the toolbar items
+    // Changing it to a dark grey makes the back arrow and share icon visible
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
+
         if (initialY <= 0) {
             initialY = mItemImage.getY();
         }
+
         int maxScroll = appBarLayout.getTotalScrollRange();
         float percentage = (float) Math.abs(offset) / (float) maxScroll;
         float scale = Math.abs(-1f + percentage);

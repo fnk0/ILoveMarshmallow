@@ -31,8 +31,10 @@ public class MarshmallowApp extends Application {
 
         if (BuildConfig.DEBUG) {
 
+            // Every time something gets logged in production a Kitty dies. JW
             Timber.plant(new Timber.DebugTree());
 
+            // Stetho is really cool for debugging using chrome dev tools!
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(
@@ -45,10 +47,20 @@ public class MarshmallowApp extends Application {
         mInstance = this;
     }
 
+    /**
+     *
+     * @return
+     *      The singleton instance of this Application
+     */
     public static MarshmallowApp instance() {
         return mInstance;
     }
 
+    /**
+     *
+     * @return
+     *      A reference to the Api used by the App
+     */
     public ZapposApi api() {
         if(mZapposApi == null) {
             mZapposApi = ZapposClient.initApi(this);

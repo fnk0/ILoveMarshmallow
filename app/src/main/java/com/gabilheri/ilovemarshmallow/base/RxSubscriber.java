@@ -9,6 +9,12 @@ import timber.log.Timber;
  * @author Marcus Gabilheri
  * @version 1.0
  * @since 9/3/15.
+ *
+ * Helper class to simplify the RxJava calls. It unsubscribes itself by default to avoid Memory leaks
+ * it also takes care of logging any errors
+ *
+ * @param <T>
+ *     The type of data to be returned
  */
 public class RxSubscriber<T> extends Subscriber<T> {
 

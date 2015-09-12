@@ -16,6 +16,9 @@ import com.squareup.picasso.Transformation;
  * @author Marcus Gabilheri
  * @version 1.0
  * @since 9/4/15.
+ *
+ * Handy method to add Rounded corners to a image that will be loaded with Picasso
+ *
  */
 public class RoundTransformation implements Transformation {
 

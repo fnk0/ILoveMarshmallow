@@ -174,6 +174,12 @@ public class MarshmallowProvider extends ContentProvider {
         return rowsUpdated;
     }
 
+    /**
+     * Helper method to Match a integer to a URI
+     *
+     * @return
+     *      the matcher object with the association with the integers
+     */
     public static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = DataContract.CONTENT_AUTHORITY;
@@ -185,6 +191,13 @@ public class MarshmallowProvider extends ContentProvider {
         return matcher;
     }
 
+    /**
+     * Helper method to get the table name of a specific URI
+     * @param uri
+     *      The URI
+     * @return
+     *      The TableName associated with this URI
+     */
     public static String getTableNameForURI(Uri uri) {
         switch (sUriMatcher.match(uri)) {
             case SEARCH_ALL:

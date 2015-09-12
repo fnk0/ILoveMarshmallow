@@ -42,6 +42,14 @@ public abstract class BaseRecyclerListFragment extends BaseFragment {
         loadPathIntoLoader(Path.getRandomPath());
     }
 
+    /**
+     * Helper method to instantiate a recycler cards list with a grid
+     * The number of columns should be specified in a integer variable
+     * This allows to have different columns based on device orientation/size etc.
+     *
+     * @param adapter
+     *      The adapter to be used by this List
+     */
     protected void initGridCardsList(RecyclerView.Adapter adapter) {
         int numCols = getResources().getInteger(R.integer.num_cols);
         mGridLayoutManager = new GridLayoutManager(mRecyclerView.getContext(), numCols);
@@ -49,6 +57,14 @@ public abstract class BaseRecyclerListFragment extends BaseFragment {
         mRecyclerView.setAdapter(adapter);
     }
 
+    /**
+     * Loads a path into the SVG path loader
+     * This is a convenience method to make usage of Android Annotations support library to
+     * get compile time safety for a String variable name
+     *
+     * @param path
+     *      A String containing a SvgPath as specified in the interface Path.SvgPath
+     */
     protected void loadPathIntoLoader(@Path.SvgPath String path) {
         mFillableLoader.setSvgPath(path);
     }
@@ -58,6 +74,12 @@ public abstract class BaseRecyclerListFragment extends BaseFragment {
         return R.layout.list_fragment;
     }
 
+    /**
+     * Swaps the loading indicator with the list
+     *
+     * @param listVisible
+     *       Where the list should be visible or not
+     */
     protected void swapViews(boolean listVisible) {
         mRecyclerView.setVisibility(listVisible ? View.VISIBLE : View.GONE);
         mLoadingLayout.setVisibility(listVisible ? View.GONE : View.VISIBLE);

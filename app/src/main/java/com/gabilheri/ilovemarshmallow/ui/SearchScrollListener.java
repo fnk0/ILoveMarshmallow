@@ -14,7 +14,7 @@ public class SearchScrollListener extends RecyclerView.OnScrollListener {
 
     int mPreviousTotal = 0; // The total number of items in the dataset after the last load
     boolean loading = true; // True if we are still waiting for the last set of data to load.
-    int visibleThreshold = 5; // The minimum amount of items to have below your current scroll position before loading more.
+    int visibleThreshold = 4; // The minimum amount of items to have below your current scroll position before loading more.
     int mFirstVisibleItem = 0;
     int mVisibleItemCount = 0;
     int mTotalItemCount = 0;
@@ -22,11 +22,15 @@ public class SearchScrollListener extends RecyclerView.OnScrollListener {
     private GridLayoutManager mGridLayoutManager;
     private OnScrolledCallback mCallback;
 
-    public SearchScrollListener(GridLayoutManager mLinearLayoutManager, OnScrolledCallback mCallback) {
-        this.mGridLayoutManager = mLinearLayoutManager;
+    public SearchScrollListener(GridLayoutManager layoutManager, OnScrolledCallback mCallback) {
+        this.mGridLayoutManager = layoutManager;
         this.mCallback = mCallback;
     }
 
+    /**
+     * Resets this ScrollListener
+     * This is specially import for when we do a new Search
+     */
     public void resetCount() {
         mCurrentPage = 1;
         mPreviousTotal = 0;
@@ -35,12 +39,15 @@ public class SearchScrollListener extends RecyclerView.OnScrollListener {
         mTotalItemCount = 0;
     }
 
+    /**
+     * Sets the currentPage of this ScrollListener
+     * Specially useful when rotating the device
+     *
+     * @param currentPage
+     *      The current page that this listener is showing
+     */
     public void setCurrentPage(int currentPage) {
         this.mCurrentPage = currentPage;
-    }
-
-    public void setTotalItemCount(int totalItemCount) {
-        this.mTotalItemCount = totalItemCount;
     }
 
     @Override

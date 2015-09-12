@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by <a href="mailto:marcusandreog@gmail.com">Marcus Gabilheri</a>
@@ -18,6 +19,8 @@ import butterknife.ButterKnife;
  * @since 9/2/15.
  */
 public abstract class BaseFragment extends Fragment {
+
+    protected CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,8 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        // Avoids leaking this subscription on configuration changes
+        mCompositeSubscription.unsubscribe();
     }
 
     @LayoutRes

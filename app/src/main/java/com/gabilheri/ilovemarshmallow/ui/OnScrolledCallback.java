@@ -9,6 +9,13 @@ package com.gabilheri.ilovemarshmallow.ui;
  */
 public interface OnScrolledCallback {
 
+    /**
+     * Default scroll callback with the current scrolled page
+     * This method only gets called when the current page is bigger than the previous one
+     *
+     * @param page
+     *      The current scrolled page
+     */
     void onScrolled(int page);
 
 }
